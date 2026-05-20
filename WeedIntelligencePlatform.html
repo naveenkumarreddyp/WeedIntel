@@ -1,0 +1,3071 @@
+<!-- WeedIntelligencePlatform.html -->
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WeedIntel™ — Herbicide GTM Platform</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+    <style>
+        :root {
+            --bg: #0b1a10;
+            --surface: #122118;
+            --card: #182e1f;
+            --border: #1e3d27;
+            --green1: #2d6a3f;
+            --green2: #3d8f55;
+            --accent: #6abf7b;
+            --amber: #e8b84b;
+            --amberdim: #a07a1e;
+            --sage: #8dc49a;
+            --text: #e8f5ec;
+            --textdim: #7aaa87;
+            --textmuted: #4a7558;
+            --red: #e05c5c;
+            --blue: #5ca8e0;
+            --purple: #9b7be0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            height: 100%;
+            background: var(--bg);
+            font-family: 'Outfit', sans-serif;
+            color: var(--text);
+        }
+
+        body {
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* ── SIDEBAR ── */
+        #sidebar {
+            width: 220px;
+            min-width: 220px;
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .logo-area {
+            padding: 22px 20px 18px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 19px;
+            font-weight: 700;
+            color: var(--accent);
+            line-height: 1.2;
+        }
+
+        .logo-sub {
+            font-size: 9px;
+            color: var(--textmuted);
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            margin-top: 3px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .crop-badge {
+            margin: 12px 0 0;
+            background: #2d6a3f22;
+            border: 1px solid var(--green1);
+            border-radius: 6px;
+            padding: 6px 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            color: var(--accent);
+        }
+
+        .nav-section {
+            padding: 14px 0 6px;
+        }
+
+        .nav-label {
+            font-size: 9px;
+            letter-spacing: 2px;
+            color: var(--textmuted);
+            padding: 0 20px 6px;
+            text-transform: uppercase;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 20px;
+            font-size: 13px;
+            color: var(--textdim);
+            cursor: pointer;
+            transition: all .15s;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-item:hover {
+            color: var(--text);
+            background: var(--card);
+        }
+
+        .nav-item.active {
+            color: var(--accent);
+            background: var(--card);
+            border-left: 3px solid var(--accent);
+        }
+
+        .nav-icon {
+            font-size: 14px;
+            width: 18px;
+            text-align: center;
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding: 14px 20px;
+            border-top: 1px solid var(--border);
+            font-size: 11px;
+            color: var(--textmuted);
+        }
+
+        .sidebar-footer span {
+            display: block;
+            font-family: 'JetBrains Mono', monospace;
+            margin-bottom: 2px;
+        }
+
+        /* ── MAIN ── */
+        #main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        #topbar {
+            padding: 16px 28px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #12211888;
+            backdrop-filter: blur(8px);
+            flex-shrink: 0;
+        }
+
+        .page-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 21px;
+            color: var(--text);
+        }
+
+        .page-sub {
+            font-size: 12px;
+            color: var(--textmuted);
+            margin-top: 2px;
+        }
+
+        .topbar-badges {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        #content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 22px 28px;
+        }
+
+        .page {
+            display: none;
+            animation: fadeIn .35s ease;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        /* ── BADGES ── */
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-family: 'JetBrains Mono', monospace;
+            white-space: nowrap;
+        }
+
+        .badge-green {
+            background: #6abf7b22;
+            color: var(--accent);
+            border: 1px solid #6abf7b44;
+        }
+
+        .badge-amber {
+            background: #e8b84b22;
+            color: var(--amber);
+            border: 1px solid #e8b84b44;
+        }
+
+        .badge-red {
+            background: #e05c5c22;
+            color: var(--red);
+            border: 1px solid #e05c5c44;
+        }
+
+        .badge-blue {
+            background: #5ca8e022;
+            color: var(--blue);
+            border: 1px solid #5ca8e044;
+        }
+
+        .badge-muted {
+            background: var(--border);
+            color: var(--textmuted);
+        }
+
+        .badge-purple {
+            background: #9b7be022;
+            color: var(--purple);
+            border: 1px solid #9b7be044;
+        }
+
+        /* ── GRIDS ── */
+        .g2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .g3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .g4 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .g3c {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 16px;
+            align-items: start;
+        }
+
+        /* ── CARD ── */
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 0;
+        }
+
+        .card-title {
+            font-size: 10px;
+            letter-spacing: 1.8px;
+            text-transform: uppercase;
+            color: var(--textmuted);
+            font-family: 'JetBrains Mono', monospace;
+            margin-bottom: 12px;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 16px;
+            color: var(--text);
+            margin-bottom: 14px;
+        }
+
+        /* ── KPI ── */
+        .kpi-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 18px;
+        }
+
+        .kpi-icon {
+            font-size: 22px;
+            opacity: .65;
+        }
+
+        .kpi-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        .kpi-val {
+            font-family: 'Playfair Display', serif;
+            font-size: 30px;
+            line-height: 1;
+        }
+
+        .kpi-unit {
+            font-size: 13px;
+            color: var(--textdim);
+            margin-left: 2px;
+        }
+
+        .kpi-label {
+            font-size: 10px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--textmuted);
+            font-family: 'JetBrains Mono', monospace;
+            margin-bottom: 4px;
+        }
+
+        .kpi-delta {
+            font-size: 11px;
+            color: var(--accent);
+            margin-top: 4px;
+        }
+
+        /* ── TABLE ── */
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table.tbl {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        table.tbl th {
+            text-align: left;
+            padding: 8px 12px;
+            color: var(--textmuted);
+            font-weight: 500;
+            border-bottom: 1px solid var(--border);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 1px;
+        }
+
+        table.tbl td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #1e3d2722;
+            color: var(--textdim);
+        }
+
+        table.tbl tr:hover td {
+            background: var(--surface);
+        }
+
+        /* ── PILLS / BARS ── */
+        .pill-bar {
+            height: 5px;
+            border-radius: 3px;
+            background: var(--border);
+            overflow: hidden;
+            margin-top: 7px;
+        }
+
+        .pill-fill {
+            height: 100%;
+            border-radius: 3px;
+            background: var(--accent);
+        }
+
+        .progress-track {
+            flex: 1;
+            height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 2px;
+        }
+
+        /* ── BUTTONS ── */
+        .btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-family: 'Outfit', sans-serif;
+            cursor: pointer;
+            border: none;
+            font-weight: 500;
+            transition: all .15s;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: var(--bg);
+        }
+
+        .btn-primary:hover {
+            background: var(--sage);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--accent);
+            border: 1px solid #6abf7b44;
+        }
+
+        .btn-outline:hover {
+            background: #6abf7b11;
+        }
+
+        .btn-sm {
+            padding: 4px 10px;
+            font-size: 11px;
+        }
+
+        /* ── INPUTS ── */
+        .inp {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: var(--text);
+            font-size: 13px;
+            font-family: 'Outfit', sans-serif;
+            outline: none;
+            width: 100%;
+        }
+
+        .inp:focus {
+            border-color: var(--green2);
+        }
+
+        .form-label {
+            font-size: 11px;
+            color: var(--textmuted);
+            margin-bottom: 5px;
+            letter-spacing: .5px;
+            display: block;
+        }
+
+        textarea.inp {
+            resize: vertical;
+        }
+
+        /* ── TABS ── */
+        .tab-bar {
+            display: flex;
+            gap: 3px;
+            background: var(--surface);
+            border-radius: 9px;
+            padding: 3px;
+            margin-bottom: 18px;
+            width: fit-content;
+        }
+
+        .tab {
+            padding: 7px 16px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            color: var(--textdim);
+            transition: all .15s;
+        }
+
+        .tab.active {
+            background: var(--card);
+            color: var(--text);
+        }
+
+        /* ── WEED CARDS ── */
+        .weed-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all .2s;
+        }
+
+        .weed-card:hover {
+            border-color: var(--green1);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px #0009;
+        }
+
+        .weed-card.open {
+            border-color: var(--accent);
+        }
+
+        .weed-name {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 13px;
+            color: var(--text);
+        }
+
+        .weed-common {
+            font-size: 12px;
+            color: var(--textdim);
+            margin-top: 2px;
+        }
+
+        .weed-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-top: 8px;
+        }
+
+        .tag {
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+        }
+
+        .tag-grass {
+            background: #6abf7b22;
+            color: var(--accent);
+        }
+
+        .tag-sedge {
+            background: #e8b84b22;
+            color: var(--amber);
+        }
+
+        .tag-broadleaf {
+            background: #8dc49a22;
+            color: var(--sage);
+        }
+
+        .tag-season {
+            background: #9b7be022;
+            color: var(--purple);
+        }
+
+        .tag-resist {
+            background: #e05c5c22;
+            color: var(--red);
+        }
+
+        .weed-detail {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+            display: none;
+        }
+
+        .weed-card.open .weed-detail {
+            display: block;
+        }
+
+        .chip {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            margin: 2px;
+            background: #9b7be022;
+            color: var(--purple);
+            border: 1px solid #9b7be033;
+        }
+
+        /* ── FUNNEL ── */
+        .funnel-step {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 7px 0;
+        }
+
+        .funnel-lbl {
+            width: 140px;
+            font-size: 11px;
+            color: var(--textdim);
+            flex-shrink: 0;
+        }
+
+        .funnel-track {
+            flex: 1;
+            height: 26px;
+            background: var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .funnel-fill {
+            height: 100%;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            font-size: 11px;
+            font-weight: 600;
+            transition: width .6s ease;
+        }
+
+        .funnel-pct {
+            width: 34px;
+            font-size: 11px;
+            color: var(--textmuted);
+            font-family: 'JetBrains Mono', monospace;
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        /* ── GTM CARDS ── */
+        .gtm-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all .2s;
+        }
+
+        .gtm-card:hover {
+            border-color: var(--green1);
+        }
+
+        .gtm-card.open {
+            border-color: var(--accent);
+        }
+
+        .gtm-region {
+            font-family: 'Playfair Display', serif;
+            font-size: 15px;
+            color: var(--text);
+        }
+
+        .gtm-expanded {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+            display: none;
+        }
+
+        .gtm-card.open .gtm-expanded {
+            display: block;
+        }
+
+        /* ── KNOWLEDGE GRAPH ── */
+        #kg-wrap {
+            position: relative;
+            height: 360px;
+            overflow: hidden;
+            background: radial-gradient(ellipse at 50% 50%, #1e3d2722 0%, transparent 70%);
+        }
+
+        .kg-center-node {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--green1);
+            border: 2px solid var(--accent);
+            border-radius: 50%;
+            width: 82px;
+            height: 82px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            text-align: center;
+            font-size: 11px;
+            color: var(--text);
+            font-weight: 600;
+            z-index: 5;
+            box-shadow: 0 0 30px #6abf7b33;
+        }
+
+        .kg-cluster {
+            position: absolute;
+            z-index: 4;
+        }
+
+        .kg-cluster-box {
+            border-radius: 8px;
+            padding: 8px 12px;
+            min-width: 100px;
+            backdrop-filter: blur(4px);
+        }
+
+        .kg-cluster-title {
+            font-size: 10px;
+            font-weight: 600;
+            font-family: 'JetBrains Mono', monospace;
+            margin-bottom: 4px;
+        }
+
+        .kg-cluster-item {
+            font-size: 10px;
+            color: var(--textdim);
+            padding: 1px 0;
+        }
+
+        #kg-svg {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .kg-footer {
+            position: absolute;
+            bottom: 8px;
+            right: 12px;
+            font-size: 10px;
+            color: var(--textmuted);
+        }
+
+        /* ── STAT ROW ── */
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #1e3d2722;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--textdim);
+        }
+
+        .stat-val {
+            font-size: 13px;
+            color: var(--text);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* ── ALERTS ── */
+        .alert-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            flex-shrink: 0;
+            margin-top: 4px;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1
+            }
+
+            50% {
+                opacity: .35
+            }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        /* ── CROP CARD ── */
+        .crop-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .crop-card.active-crop {
+            border-color: var(--accent);
+        }
+
+        .crop-card.inactive {
+            opacity: .45;
+        }
+
+        .crop-emoji {
+            font-size: 30px;
+            margin-bottom: 8px;
+        }
+
+        .crop-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 15px;
+            color: var(--text);
+        }
+
+        /* ── MATURITY SCORE ── */
+        .maturity-score {
+            text-align: center;
+            padding: 12px 0 16px;
+        }
+
+        .score-big {
+            font-family: 'Playfair Display', serif;
+            font-size: 58px;
+            color: var(--accent);
+            line-height: 1;
+        }
+
+        /* ── DIVIDER ── */
+        hr.div {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 14px 0;
+        }
+
+        /* ── INFO BANNER ── */
+        .info-banner {
+            padding: 12px 16px;
+            background: var(--card);
+            border-radius: 10px;
+            border: 1px solid #e8b84b44;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 16px;
+            font-size: 12px;
+            color: var(--textdim);
+        }
+
+        /* ── RADAR LEGEND ── */
+        .radar-legend {
+            display: flex;
+            gap: 14px;
+            justify-content: center;
+            margin-top: 6px;
+        }
+
+        .rl-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 10px;
+            color: var(--textdim);
+        }
+
+        .rl-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        /* ── SURVEY WEED ROW ── */
+        .survey-weed-row {
+            background: var(--surface);
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 8px;
+        }
+
+        /* ── WEED DASHBOARD ── */
+        .wd-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+
+        .wd-stat-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px;
+        }
+
+        .wd-stat-val {
+            font-family: 'Playfair Display', serif;
+            font-size: 26px;
+            color: var(--text);
+            line-height: 1;
+        }
+
+        .wd-stat-label {
+            font-size: 10px;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            color: var(--textmuted);
+            font-family: 'JetBrains Mono', monospace;
+            margin-bottom: 6px;
+        }
+
+        .wd-section {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 18px;
+        }
+
+        .wd-section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 16px;
+            color: var(--text);
+            margin-bottom: 16px;
+        }
+
+        .wd-heatmap-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 6px;
+        }
+
+        .wd-mandal-cell {
+            border-radius: 6px;
+            padding: 10px 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all .2s;
+            border: 1px solid transparent;
+            min-height: 70px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .wd-mandal-cell:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px #0008;
+            border-color: var(--accent);
+        }
+
+        .wd-mandal-name {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 3px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+        }
+
+        .wd-mandal-val {
+            font-size: 11px;
+            font-family: 'JetBrains Mono', monospace;
+            color: rgba(255, 255, 255, .8);
+        }
+
+        .wd-info-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .wd-info-row {
+            background: var(--surface);
+            border-radius: 8px;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+        }
+
+        .wd-info-label {
+            font-size: 9px;
+            color: var(--textmuted);
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+
+        .wd-info-val {
+            font-size: 13px;
+            color: var(--text);
+        }
+
+        .crop-select {
+            width: 100%;
+            margin: 12px 0 0;
+            background: #2d6a3f22;
+            border: 1px solid var(--green1);
+            border-radius: 6px;
+            padding: 8px 10px;
+            font-size: 12px;
+            color: var(--accent);
+            font-family: 'Outfit', sans-serif;
+            outline: none;
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236abf7b' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+        }
+
+        .crop-select option {
+            background: var(--surface);
+            color: var(--text);
+        }
+
+        .wd-legend {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .wd-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 10px;
+            color: var(--textdim);
+        }
+
+        .wd-legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+        }
+
+        .wd-weed-select {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 14px;
+            color: var(--text);
+            font-size: 13px;
+            font-family: 'Outfit', sans-serif;
+            outline: none;
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%234a7558' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            min-width: 280px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ═══════════════════════════════ SIDEBAR ═══════════════════════════════ -->
+    <nav id="sidebar">
+        <div class="logo-area">
+            <div class="logo-title">WeedIntel™</div>
+            <div class="logo-sub">Herbicide GTM Platform</div>
+            <select id="cropSelector" class="crop-select" onchange="onCropChange(this.value)">
+                <option value="paddy_ap">🌾 Paddy · Kharif 2024 · AP</option>
+                <option value="maize_mh">🌽 Maize · Kharif 2024 · MH</option>
+            </select>
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-label">Overview</div>
+            <div class="nav-item active" onclick="nav('dashboard',this)"><span class="nav-icon">⬡</span> Dashboard</div>
+            <div class="nav-item" onclick="nav('weeddashboard',this)"><span class="nav-icon">🗺️</span> Weed Survey
+                Dashboard</div>
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-label">Intelligence</div>
+            <div class="nav-item" onclick="nav('weedrepo',this)"><span class="nav-icon">🌿</span> Weed Repository</div>
+            <div class="nav-item" onclick="nav('fieldsurvey',this)"><span class="nav-icon">📋</span> Field Survey</div>
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-label">Go-To-Market</div>
+            <div class="nav-item" onclick="nav('gtmbuilder',this)"><span class="nav-icon">🗺️</span> GTM Builder</div>
+            <div class="nav-item" onclick="nav('gtmexec',this)"><span class="nav-icon">🚀</span> GTM Execution</div>
+            <div class="nav-item" onclick="nav('segtool',this)"><span class="nav-icon">🎯</span> Segmentation Tool</div>
+            <div class="nav-item" onclick="nav('prodlaunch',this)"><span class="nav-icon">🚀</span> Product Launch</div>
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-label">Insights</div>
+            <div class="nav-item" onclick="nav('cropintel',this)"><span class="nav-icon">🌾</span> Crop Intelligence
+            </div>
+            <div class="nav-item" onclick="nav('analytics',this)"><span class="nav-icon">📊</span> Analytics</div>
+        </div>
+
+        <div class="sidebar-footer">
+            <span>v2.4.1 · Paddy Module</span>
+            Powered by Weed KG Engine
+        </div>
+    </nav>
+
+    <!-- ═══════════════════════════════ MAIN ═══════════════════════════════ -->
+    <div id="main">
+        <div id="topbar">
+            <div>
+                <div class="page-title" id="topTitle">Weed Intelligence Dashboard</div>
+                <div class="page-sub" id="topSub">Paddy — Kharif 2024 · South India</div>
+            </div>
+            <div class="topbar-badges">
+                <span class="badge badge-green pulse">● Live</span>
+                <span class="badge badge-amber">Kharif 2024</span>
+                <span class="badge badge-blue">🌾 Paddy</span>
+            </div>
+        </div>
+
+        <div id="content">
+
+            <!-- ═══ PAGE: DASHBOARD ═══ -->
+            <div class="page active" id="pg-dashboard">
+                <!-- KPIs -->
+                <div class="g4">
+                    <div class="kpi-card">
+                        <div class="kpi-top">
+                            <div>
+                                <div class="kpi-label">Geographies Covered</div>
+                                <div><span class="kpi-val" style="color:var(--accent)">12</span></div>
+                            </div>
+                            <div class="kpi-icon">🗺️</div>
+                        </div>
+                        <div class="kpi-delta">↑ 3 new this season</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-top">
+                            <div>
+                                <div class="kpi-label">Weed Species Mapped</div>
+                                <div><span class="kpi-val" style="color:var(--sage)">113</span><span class="kpi-unit">
+                                        spp.</span></div>
+                            </div>
+                            <div class="kpi-icon">🌿</div>
+                        </div>
+                        <div class="kpi-delta">↑ +18 this quarter</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-top">
+                            <div>
+                                <div class="kpi-label">Surveys Completed</div>
+                                <div><span class="kpi-val" style="color:var(--amber)">540</span></div>
+                            </div>
+                            <div class="kpi-icon">📋</div>
+                        </div>
+                        <div class="kpi-delta">↑ +205 this month</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-top">
+                            <div>
+                                <div class="kpi-label">GTM Pipeline</div>
+                                <div><span class="kpi-val" style="color:var(--blue)">₹68.4</span><span
+                                        class="kpi-unit">L</span></div>
+                            </div>
+                            <div class="kpi-icon">💰</div>
+                        </div>
+                        <div class="kpi-delta">↑ 23% conversion rate</div>
+                    </div>
+                </div>
+
+                <!-- Charts row -->
+                <div class="g2">
+                    <div class="card">
+                        <div class="card-title">Survey & Repository Growth</div>
+                        <div style="position:relative;height:160px;"><canvas id="chartGrowth"></canvas></div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Weed Type Distribution</div>
+                        <div style="display:flex;align-items:center;gap:16px;">
+                            <canvas id="chartWeedType" width="150" height="150" style="flex-shrink:0;"></canvas>
+                            <div style="flex:1;">
+                                <div class="stat-row">
+                                    <div style="display:flex;align-items:center;gap:6px;">
+                                        <div style="width:8px;height:8px;border-radius:50%;background:var(--accent)">
+                                        </div><span class="stat-label">Grass</span>
+                                    </div><span class="stat-val">42</span>
+                                </div>
+                                <div class="stat-row">
+                                    <div style="display:flex;align-items:center;gap:6px;">
+                                        <div style="width:8px;height:8px;border-radius:50%;background:var(--amber)">
+                                        </div><span class="stat-label">Sedge</span>
+                                    </div><span class="stat-val">28</span>
+                                </div>
+                                <div class="stat-row">
+                                    <div style="display:flex;align-items:center;gap:6px;">
+                                        <div style="width:8px;height:8px;border-radius:50%;background:var(--sage)">
+                                        </div><span class="stat-label">Broadleaf</span>
+                                    </div><span class="stat-val">31</span>
+                                </div>
+                                <div class="stat-row">
+                                    <div style="display:flex;align-items:center;gap:6px;">
+                                        <div style="width:8px;height:8px;border-radius:50%;background:var(--blue)">
+                                        </div><span class="stat-label">Aquatic</span>
+                                    </div><span class="stat-val">12</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Funnel + Revenue -->
+                <div class="g2">
+                    <div class="card">
+                        <div class="card-title">GTM Sales Pipeline (Farmers)</div>
+                        <div id="pipelineFunnel"></div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Revenue Target vs Actual (₹ Lakhs)</div>
+                        <div style="position:relative;height:160px;"><canvas id="chartRevenue"></canvas></div>
+                    </div>
+                </div>
+
+                <!-- Geo table -->
+                <div class="card">
+                    <div class="card-title">Geography Coverage Status</div>
+                    <div class="table-wrap">
+                        <table class="tbl">
+                            <thead>
+                                <tr>
+                                    <th>Region</th>
+                                    <th>Surveys</th>
+                                    <th>Weed Spp.</th>
+                                    <th>Coverage %</th>
+                                    <th>Pipeline (₹L)</th>
+                                    <th>GTM Ready</th>
+                                </tr>
+                            </thead>
+                            <tbody id="geoTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div><!-- /dashboard -->
+
+            <!-- ═══ PAGE: WEED DASHBOARD ═══ -->
+            <div class="page" id="pg-weeddashboard">
+                <!-- Stats Cards -->
+                <div class="wd-stats-grid" id="wdStatsGrid"></div>
+
+                <!-- Section 1: Overall Weed Heatmap -->
+                <div class="wd-section">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                        <div class="wd-section-title" style="margin-bottom:0;">🗺️ State Weed Infestation Map — <span
+                                id="wdMapTitle">Mandal Level</span></div>
+                        <div style="display:flex;gap:6px;align-items:center;">
+                            <span
+                                style="font-size:10px;color:var(--textmuted);font-family:'JetBrains Mono',monospace;">HEAT
+                                INDEX</span>
+                            <div
+                                style="width:80px;height:8px;border-radius:4px;background:linear-gradient(90deg,#2d6a3f,#e8b84b,#e05c5c);">
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display:grid;grid-template-columns:3fr 2fr;gap:20px;">
+                        <div>
+                            <div class="wd-heatmap-grid" id="wdHeatmap1"></div>
+                            <div class="wd-legend" id="wdLegend1"></div>
+                        </div>
+                        <div class="wd-info-panel" id="wdInfoPanel1"></div>
+                    </div>
+                </div>
+
+                <!-- Section 2: Weed-Specific Map -->
+                <div class="wd-section">
+                    <div
+                        style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+                        <div class="wd-section-title" style="margin-bottom:0;">🌿 Weed-Specific Distribution Map</div>
+                        <select class="wd-weed-select" id="wdWeedSelect" onchange="onWeedSelect(this.value)"></select>
+                    </div>
+                    <div style="display:grid;grid-template-columns:3fr 2fr;gap:20px;">
+                        <div>
+                            <div class="wd-heatmap-grid" id="wdHeatmap2"></div>
+                            <div class="wd-legend" id="wdLegend2"></div>
+                        </div>
+                        <div class="wd-info-panel" id="wdInfoPanel2"></div>
+                    </div>
+                </div>
+            </div><!-- /weeddashboard -->
+
+            <!-- ═══ PAGE: WEED REPOSITORY ═══ -->
+            <div class="page" id="pg-weedrepo">
+                <div style="display:flex;gap:8px;margin-bottom:16px;align-items:center;flex-wrap:wrap;">
+                    <button class="btn btn-primary" onclick="filterWeeds('All',this)">All</button>
+                    <button class="btn btn-outline" onclick="filterWeeds('Grass',this)">Grass</button>
+                    <button class="btn btn-outline" onclick="filterWeeds('Sedge',this)">Sedge</button>
+                    <button class="btn btn-outline" onclick="filterWeeds('Broadleaf',this)">Broadleaf</button>
+                    <div style="flex:1;"></div>
+                    <span style="font-size:12px;color:var(--textmuted);" id="weedCount">8 species in repository</span>
+                </div>
+
+                <div class="g3" id="weedGrid" style="margin-bottom:16px;"></div>
+
+                <!-- Knowledge Graph + Area Intelligence -->
+                <div class="card" id="kgCard">
+                    <!-- Tab bar -->
+                    <div style="display:flex;gap:4px;background:var(--surface);border-radius:8px;padding:3px;
+                    margin-bottom:16px;width:fit-content;">
+                        <div class="kgtab active" id="kgt-kg" onclick="switchKGTab('kg',this)" style="padding:7px 16px;border-radius:6px;font-size:12px;cursor:pointer;
+                   background:var(--card);color:var(--text);transition:all .15s;">🕸 Knowledge Graph</div>
+                        <div class="kgtab" id="kgt-area" onclick="switchKGTab('area',this)" style="padding:7px 16px;border-radius:6px;font-size:12px;cursor:pointer;
+                   color:var(--textdim);transition:all .15s;">🗺 Area Intelligence</div>
+                    </div>
+
+                    <!-- ── KG TAB ── -->
+                    <div id="kgTabKG">
+                        <div class="card-title">Weed Knowledge Graph — Paddy Crop Intelligence Network</div>
+                        <div id="kg-wrap">
+                            <svg id="kg-svg"></svg>
+                            <div class="kg-center-node"><span style="font-size:24px;">🌾</span><span>Paddy</span><span
+                                    style="font-size:9px;color:var(--textdim);">113 spp.</span></div>
+                            <div class="kg-cluster" style="left:5%;top:8%;">
+                                <div class="kg-cluster-box" style="background:#6abf7b11;border:1px solid #6abf7b33;">
+                                    <div class="kg-cluster-title" style="color:var(--accent);">🌾 Grasses</div>
+                                    <div class="kg-cluster-item">· Barnyard Grass</div>
+                                    <div class="kg-cluster-item">· Knotgrass</div>
+                                    <div class="kg-cluster-item">· Murainagrass</div>
+                                    <div class="kg-cluster-item" style="color:var(--textmuted);">+39 more</div>
+                                </div>
+                            </div>
+                            <div class="kg-cluster" style="right:4%;top:6%;">
+                                <div class="kg-cluster-box" style="background:#e8b84b11;border:1px solid #e8b84b33;">
+                                    <div class="kg-cluster-title" style="color:var(--amber);">🌿 Sedges</div>
+                                    <div class="kg-cluster-item">· Var. Flatsedge</div>
+                                    <div class="kg-cluster-item">· Globe Fimbry</div>
+                                    <div class="kg-cluster-item" style="color:var(--textmuted);">+26 more</div>
+                                </div>
+                            </div>
+                            <div class="kg-cluster" style="right:2%;bottom:12%;">
+                                <div class="kg-cluster-box" style="background:#8dc49a11;border:1px solid #8dc49a33;">
+                                    <div class="kg-cluster-title" style="color:var(--sage);">🍃 Broadleafs</div>
+                                    <div class="kg-cluster-item">· Pickerelweed</div>
+                                    <div class="kg-cluster-item">· Gooseweed</div>
+                                    <div class="kg-cluster-item">· Water Primrose</div>
+                                    <div class="kg-cluster-item" style="color:var(--textmuted);">+28 more</div>
+                                </div>
+                            </div>
+                            <div class="kg-cluster" style="left:4%;bottom:10%;">
+                                <div class="kg-cluster-box" style="background:#9b7be011;border:1px solid #9b7be033;">
+                                    <div class="kg-cluster-title" style="color:var(--purple);">📍 Regions</div>
+                                    <div class="kg-cluster-item">· Telangana</div>
+                                    <div class="kg-cluster-item">· Andhra Pradesh</div>
+                                    <div class="kg-cluster-item">· Karnataka</div>
+                                    <div class="kg-cluster-item" style="color:var(--textmuted);">+9 more</div>
+                                </div>
+                            </div>
+                            <div class="kg-cluster" style="left:38%;top:4%;">
+                                <div class="kg-cluster-box" style="background:#5ca8e011;border:1px solid #5ca8e033;">
+                                    <div class="kg-cluster-title" style="color:var(--blue);">💊 Products</div>
+                                    <div class="kg-cluster-item">· HerboPro Max</div>
+                                    <div class="kg-cluster-item">· WeedOut Gold</div>
+                                    <div class="kg-cluster-item">· SedgeClear</div>
+                                </div>
+                            </div>
+                            <div class="kg-footer">Nodes: 113 species · 12 regions · 6 products connected</div>
+                        </div>
+                    </div>
+
+                    <!-- ── AREA INTELLIGENCE TAB ── -->
+                    <div id="kgTabArea" style="display:none;">
+                        <div style="display:flex;gap:12px;">
+
+                            <!-- Left: area list -->
+                            <div style="width:260px;flex-shrink:0;">
+                                <div class="card-title">REGIONS · CLICK TO EXPLORE</div>
+                                <div id="areaList" style="display:flex;flex-direction:column;gap:8px;"></div>
+                            </div>
+
+                            <!-- Right: detail panel -->
+                            <div style="flex:1;min-width:0;">
+                                <div id="areaDetailPanel">
+                                    <!-- Default state -->
+                                    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;
+                            height:400px;color:var(--textmuted);text-align:center;gap:8px;
+                            border:1px dashed var(--border);border-radius:10px;">
+                                        <span style="font-size:40px;">🗺️</span>
+                                        <div style="font-size:14px;">Select a region to view<br />area-wise weed
+                                            intelligence</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Bottom: cross-area weed heatmap -->
+                        <div style="margin-top:16px;">
+                            <div class="card-title">CROSS-AREA WEED PREVALENCE HEATMAP</div>
+                            <div style="overflow-x:auto;">
+                                <table style="width:100%;border-collapse:collapse;font-size:11px;" id="heatmapTable">
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- /weedrepo -->
+
+            <!-- ═══ PAGE: FIELD SURVEY ═══ -->
+            <div class="page" id="pg-fieldsurvey">
+                <div class="tab-bar">
+                    <div class="tab active" onclick="surveyTab('active',this)">📋 Active Surveys</div>
+                    <div class="tab" onclick="surveyTab('new',this)">➕ New Survey</div>
+                    <div class="tab" onclick="surveyTab('history',this)">📁 History</div>
+                </div>
+
+                <!-- Active tab -->
+                <div id="sv-active">
+                    <div class="g4" style="margin-bottom:16px;">
+                        <div class="kpi-card">
+                            <div class="kpi-top">
+                                <div>
+                                    <div class="kpi-label">Field Agents</div>
+                                    <div><span class="kpi-val">28</span></div>
+                                </div>
+                                <div class="kpi-icon">👥</div>
+                            </div>
+                            <div class="kpi-delta">↑ Active this week</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-top">
+                                <div>
+                                    <div class="kpi-label">Villages Covered</div>
+                                    <div><span class="kpi-val" style="color:var(--amber)">342</span></div>
+                                </div>
+                                <div class="kpi-icon">📍</div>
+                            </div>
+                            <div class="kpi-delta">↑ +45 this month</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-top">
+                                <div>
+                                    <div class="kpi-label">Pending Review</div>
+                                    <div><span class="kpi-val">14</span></div>
+                                </div>
+                                <div class="kpi-icon">🕐</div>
+                            </div>
+                            <div class="kpi-delta">Awaiting approval</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-top">
+                                <div>
+                                    <div class="kpi-label">Approved</div>
+                                    <div><span class="kpi-val" style="color:var(--accent)">526</span></div>
+                                </div>
+                                <div class="kpi-icon">✅</div>
+                            </div>
+                            <div class="kpi-delta">In repository</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="section-title">Recent Field Surveys</div>
+                        <div class="table-wrap">
+                            <table class="tbl">
+                                <thead>
+                                    <tr>
+                                        <th>Survey ID</th>
+                                        <th>Field/Location</th>
+                                        <th>Agent</th>
+                                        <th>Date</th>
+                                        <th>Weeds Found</th>
+                                        <th>Crop</th>
+                                        <th>Status</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td style="color:var(--accent);font-family:'JetBrains Mono',monospace">SV-2401
+                                        </td>
+                                        <td style="color:var(--text)">Nalgonda Block-A</td>
+                                        <td>Ravi Kumar</td>
+                                        <td style="font-family:'JetBrains Mono',monospace">2024-04-10</td>
+                                        <td style="text-align:center"><span class="badge badge-amber">4</span></td>
+                                        <td>🌾 Paddy</td>
+                                        <td><span class="badge badge-green">Submitted</span></td>
+                                        <td><button class="btn btn-outline btn-sm">View</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="color:var(--accent);font-family:'JetBrains Mono',monospace">SV-2402
+                                        </td>
+                                        <td style="color:var(--text)">Warangal South</td>
+                                        <td>Priya Sharma</td>
+                                        <td style="font-family:'JetBrains Mono',monospace">2024-04-09</td>
+                                        <td style="text-align:center"><span class="badge badge-amber">3</span></td>
+                                        <td>🌾 Paddy</td>
+                                        <td><span class="badge badge-green">Submitted</span></td>
+                                        <td><button class="btn btn-outline btn-sm">View</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="color:var(--accent);font-family:'JetBrains Mono',monospace">SV-2403
+                                        </td>
+                                        <td style="color:var(--text)">Guntur Delta</td>
+                                        <td>Suresh Rao</td>
+                                        <td style="font-family:'JetBrains Mono',monospace">2024-04-08</td>
+                                        <td style="text-align:center"><span class="badge badge-amber">5</span></td>
+                                        <td>🌾 Paddy</td>
+                                        <td><span class="badge badge-amber">In Review</span></td>
+                                        <td><button class="btn btn-outline btn-sm">View</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="color:var(--accent);font-family:'JetBrains Mono',monospace">SV-2404
+                                        </td>
+                                        <td style="color:var(--text)">Mandya District</td>
+                                        <td>Arjun Nair</td>
+                                        <td style="font-family:'JetBrains Mono',monospace">2024-04-07</td>
+                                        <td style="text-align:center"><span class="badge badge-amber">2</span></td>
+                                        <td>🌾 Paddy</td>
+                                        <td><span class="badge badge-green">Submitted</span></td>
+                                        <td><button class="btn btn-outline btn-sm">View</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="color:var(--accent);font-family:'JetBrains Mono',monospace">SV-2405
+                                        </td>
+                                        <td style="color:var(--text)">Thanjavur Block</td>
+                                        <td>Meena Devi</td>
+                                        <td style="font-family:'JetBrains Mono',monospace">2024-04-06</td>
+                                        <td style="text-align:center"><span class="badge badge-amber">6</span></td>
+                                        <td>🌾 Paddy</td>
+                                        <td><span class="badge badge-muted">Draft</span></td>
+                                        <td><button class="btn btn-outline btn-sm">View</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- New Survey tab -->
+                <div id="sv-new" style="display:none;">
+                    <div class="g2">
+                        <div class="card">
+                            <div class="section-title">New Field Survey Form</div>
+                            <div style="display:grid;gap:12px;">
+                                <div><label class="form-label">CROP</label><select class="inp">
+                                        <option>🌾 Paddy</option>
+                                    </select></div>
+                                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                                    <div><label class="form-label">STATE</label>
+                                        <select class="inp">
+                                            <option>Telangana</option>
+                                            <option>Andhra Pradesh</option>
+                                            <option>Karnataka</option>
+                                            <option>Tamil Nadu</option>
+                                        </select>
+                                    </div>
+                                    <div><label class="form-label">DISTRICT</label><input class="inp"
+                                            placeholder="e.g. Nalgonda" /></div>
+                                </div>
+                                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                                    <div><label class="form-label">VILLAGE / BLOCK</label><input class="inp"
+                                            placeholder="Village name" /></div>
+                                    <div><label class="form-label">FIELD AREA (ACRES)</label><input class="inp"
+                                            type="number" placeholder="0.0"
+                                            style="font-family:'JetBrains Mono',monospace" /></div>
+                                </div>
+                                <div><label class="form-label">CROP STAGE</label>
+                                    <select class="inp">
+                                        <option>Transplanting (0-7 DAT)</option>
+                                        <option>Tillering (8-30 DAT)</option>
+                                        <option>Panicle Initiation (30-60 DAT)</option>
+                                        <option>Heading / Flowering</option>
+                                    </select>
+                                </div>
+                                <div><label class="form-label">IRRIGATION TYPE</label>
+                                    <div style="display:flex;gap:8px;">
+                                        <button class="btn btn-outline" style="flex:1;font-size:11px;"
+                                            onclick="toggleIrr(this)">Flooded</button>
+                                        <button class="btn btn-outline" style="flex:1;font-size:11px;"
+                                            onclick="toggleIrr(this)">Irrigated</button>
+                                        <button class="btn btn-outline" style="flex:1;font-size:11px;"
+                                            onclick="toggleIrr(this)">Rainfed</button>
+                                    </div>
+                                </div>
+                                <hr class="div" />
+                                <div>
+                                    <div
+                                        style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                                        <label class="form-label" style="margin:0;">WEED SPECIES OBSERVED</label>
+                                        <button class="btn btn-outline btn-sm" onclick="addWeedRow()">+ Add
+                                            Weed</button>
+                                    </div>
+                                    <div id="weedRowContainer">
+                                        <div
+                                            style="text-align:center;padding:18px 0;color:var(--textmuted);font-size:12px;">
+                                            Click "+ Add Weed" to log weed species</div>
+                                    </div>
+                                </div>
+                                <div><label class="form-label">NOTES / OBSERVATIONS</label><textarea class="inp"
+                                        rows="3" placeholder="Additional field observations..."></textarea></div>
+                                <button class="btn btn-primary" style="width:100%;">Submit Survey</button>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="card" style="margin-bottom:16px;">
+                                <div class="card-title">GPS Tagging</div>
+                                <div
+                                    style="background:var(--surface);border-radius:8px;height:170px;display:flex;align-items:center;justify-content:center;border:1px dashed var(--border);flex-direction:column;gap:8px;">
+                                    <span style="font-size:32px;">📍</span>
+                                    <span style="font-size:12px;color:var(--textmuted);">Tap to capture GPS
+                                        coordinates</span>
+                                    <button class="btn btn-outline btn-sm">Capture Location</button>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card-title">Survey Quality Checklist</div>
+                                <div id="checklist"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- History tab -->
+                <div id="sv-history" style="display:none;">
+                    <div class="card">
+                        <div class="card-title">Survey History — All Regions</div>
+                        <div style="position:relative;height:180px;"><canvas id="chartSurveyHistory"></canvas></div>
+                    </div>
+                </div>
+            </div><!-- /fieldsurvey -->
+
+            <!-- ═══ PAGE: GTM BUILDER ═══ -->
+            <div class="page" id="pg-gtmbuilder">
+                <div class="info-banner">
+                    <span style="font-size:18px;">🤖</span>
+                    <span>GTM Algorithm considers: <strong style="color:var(--text);">Weed pressure index</strong> ·
+                        <strong style="color:var(--text);">Product efficacy matrix</strong> · <strong
+                            style="color:var(--text);">Market penetration</strong> · <strong
+                            style="color:var(--text);">Channel availability</strong> · <strong
+                            style="color:var(--text);">Seasonal windows</strong></span>
+                </div>
+
+                <div class="g2" style="margin-bottom:16px;" id="gtmGrid"></div>
+
+                <div class="card">
+                    <div class="card-title">Product Portfolio — Weed Target Matrix</div>
+                    <div class="table-wrap">
+                        <table class="tbl">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Active Ingredient</th>
+                                    <th>Target Weeds</th>
+                                    <th>Timing</th>
+                                    <th>Margin %</th>
+                                    <th>Stock (units)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="color:var(--accent);font-weight:600;">HerboPro Max</td>
+                                    <td
+                                        style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--textdim);">
+                                        Pretilachlor 50% EC</td>
+                                    <td><span class="tag tag-grass">Grass</span><span class="tag tag-sedge"
+                                            style="margin-left:3px;">Sedge</span></td>
+                                    <td style="font-size:11px;">Pre-emergence</td>
+                                    <td style="color:var(--accent);font-family:'JetBrains Mono',monospace;">42%</td>
+                                    <td style="font-family:'JetBrains Mono',monospace;">8,400</td>
+                                </tr>
+                                <tr>
+                                    <td style="color:var(--accent);font-weight:600;">WeedOut Gold</td>
+                                    <td
+                                        style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--textdim);">
+                                        Bispyribac-Na 10% SC</td>
+                                    <td><span class="tag tag-grass">Grass</span><span class="tag tag-broadleaf"
+                                            style="margin-left:3px;">Broadleaf</span></td>
+                                    <td style="font-size:11px;">Post-emergence</td>
+                                    <td style="color:var(--amber);font-family:'JetBrains Mono',monospace;">38%</td>
+                                    <td style="font-family:'JetBrains Mono',monospace;">6,200</td>
+                                </tr>
+                                <tr>
+                                    <td style="color:var(--accent);font-weight:600;">SedgeClear</td>
+                                    <td
+                                        style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--textdim);">
+                                        Pyrazosulfuron 10% WP</td>
+                                    <td><span class="tag tag-sedge">Sedge</span></td>
+                                    <td style="font-size:11px;">Post-emergence</td>
+                                    <td style="color:var(--accent);font-family:'JetBrains Mono',monospace;">45%</td>
+                                    <td style="font-family:'JetBrains Mono',monospace;">4,100</td>
+                                </tr>
+                                <tr>
+                                    <td style="color:var(--accent);font-weight:600;">BroadShield</td>
+                                    <td
+                                        style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--textdim);">
+                                        2,4-D Amine 58% SL</td>
+                                    <td><span class="tag tag-broadleaf">Broadleaf</span></td>
+                                    <td style="font-size:11px;">Post-emergence</td>
+                                    <td style="color:var(--textdim);font-family:'JetBrains Mono',monospace;">35%</td>
+                                    <td style="font-family:'JetBrains Mono',monospace;">12,000</td>
+                                </tr>
+                                <tr>
+                                    <td style="color:var(--accent);font-weight:600;">GrassKill Pro</td>
+                                    <td
+                                        style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--textdim);">
+                                        Cyhalofop-butyl 10% EC</td>
+                                    <td><span class="tag tag-grass">Grass</span></td>
+                                    <td style="font-size:11px;">Post-emergence</td>
+                                    <td style="color:var(--accent);font-family:'JetBrains Mono',monospace;">48%</td>
+                                    <td style="font-family:'JetBrains Mono',monospace;">3,800</td>
+                                </tr>
+                                <tr>
+                                    <td style="color:var(--accent);font-weight:600;">TotalClear</td>
+                                    <td
+                                        style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--textdim);">
+                                        Metsulfuron+Chlorimuron</td>
+                                    <td><span class="tag tag-broadleaf">Broadleaf</span><span class="tag tag-sedge"
+                                            style="margin-left:3px;">Sedge</span></td>
+                                    <td style="font-size:11px;">Post-emergence</td>
+                                    <td style="color:var(--accent);font-family:'JetBrains Mono',monospace;">41%</td>
+                                    <td style="font-family:'JetBrains Mono',monospace;">5,600</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div><!-- /gtmbuilder -->
+
+            <!-- ═══ PAGE: GTM EXECUTION ═══ -->
+            <div class="page" id="pg-gtmexec">
+                <div class="g4" style="margin-bottom:16px;">
+                    <div class="kpi-card">
+                        <div class="kpi-top">
+                            <div>
+                                <div class="kpi-label">Demand Activations</div>
+                                <div><span class="kpi-val" style="color:var(--accent)">1,890</span></div>
+                            </div>
+                            <div class="kpi-icon">📣</div>
+                        </div>
+                        <div class="kpi-delta">↑ +340 this week</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-top">
+                            <div>
+                                <div class="kpi-label">Trials Conducted</div>
+                                <div><span class="kpi-val" style="color:var(--sage)">1,234</span></div>
+                            </div>
+                            <div class="kpi-icon">🧪</div>
+                        </div>
+                        <div class="kpi-delta">65% from GTM plan</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-top">
+                            <div>
+                                <div class="kpi-label">Orders Placed</div>
+                                <div><span class="kpi-val" style="color:var(--amber)">940</span></div>
+                            </div>
+                            <div class="kpi-icon">🛒</div>
+                        </div>
+                        <div class="kpi-delta">₹38.2L value</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-top">
+                            <div>
+                                <div class="kpi-label">Repeat Purchase</div>
+                                <div><span class="kpi-val" style="color:var(--blue)">34%</span></div>
+                            </div>
+                            <div class="kpi-icon">📈</div>
+                        </div>
+                        <div class="kpi-delta">↑ 8% MoM</div>
+                    </div>
+                </div>
+                <div class="g2">
+                    <div class="card">
+                        <div class="card-title">Execution Pipeline by Region</div>
+                        <div style="position:relative;height:175px;"><canvas id="chartExecPipeline"></canvas></div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Sales Conversion Funnel</div>
+                        <div id="salesFunnel" style="padding-top:8px;"></div>
+                    </div>
+                </div>
+                <div class="card" style="margin-top:16px;">
+                    <div class="card-title">Demand Generation Activities</div>
+                    <div class="table-wrap">
+                        <table class="tbl">
+                            <thead>
+                                <tr>
+                                    <th>Activity</th>
+                                    <th>Region</th>
+                                    <th>Target</th>
+                                    <th>Completed</th>
+                                    <th>Leads</th>
+                                    <th>Orders</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="color:var(--text);">Farmer Demonstration</td>
+                                    <td>Telangana</td>
+                                    <td style="font-family:'JetBrains Mono',monospace;">120</td>
+                                    <td>
+                                        <div style="display:flex;align-items:center;gap:6px;">
+                                            <div class="progress-track" style="width:50px;">
+                                                <div class="progress-fill" style="width:82%;background:var(--accent);">
+                                                </div>
+                                            </div><span
+                                                style="font-size:11px;font-family:'JetBrains Mono',monospace;">98</span>
+                                        </div>
+                                    </td>
+                                    <td style="color:var(--amber);font-family:'JetBrains Mono',monospace;">340</td>
+                                    <td style="color:var(--accent);font-family:'JetBrains Mono',monospace;">82</td>
+                                    <td><span class="badge badge-green">Active</span></td>
+                                </tr>
+                                <tr>
+                                    <td style="color:var(--text);">FPO Awareness Camp</td>
+                                    <td>AP</td>
+                                    <td style="font-family:'JetBrains Mono',monospace;">40</td>
+                                    <td>
+                                        <div style="display:flex;align-items:center;gap:6px;">
+                                            <div class="progress-track" style="width:50px;">
+                                                <div class="progress-fill" style="width:87%;background:var(--accent);">
+                                                </div>
+                                            </div><span
+                                                style="font-size:11px;font-family:'JetBrains Mono',monospace;">35</span>
+                                        </div>
+                                    </td>
+                                    <td style="color:var(--amber);font-family:'JetBrains Mono',monospace;">210</td>
+                                    <td style="color:var(--accent);font-family:'JetBrains Mono',monospace;">54</td>
+                                    <td><span class="badge badge-green">Active</span></td>
+                                </tr>
+                                <tr>
+                                    <td style="color:var(--text);">Dealer Activation</td>
+                                    <td>Telangana</td>
+                                    <td style="font-family:'JetBrains Mono',monospace;">80</td>
+                                    <td>
+                                        <div style="display:flex;align-items:center;gap:6px;">
+                                            <div class="progress-track" style="width:50px;">
+                                                <div class="progress-fill" style="width:90%;background:var(--accent);">
+                                                </div>
+                                            </div><span
+                                                style="font-size:11px;font-family:'JetBrains Mono',monospace;">72</span>
+                                        </div>
+                                    </td>
+                                    <td style="color:var(--amber);font-family:'JetBrains Mono',monospace;">290</td>
+                                    <td style="color:var(--accent);font-family:'JetBrains Mono',monospace;">68</td>
+                                    <td><span class="badge badge-green">Active</span></td>
+                                </tr>
+                                <tr>
+                                    <td style="color:var(--text);">Digital Campaign</td>
+                                    <td>Multi</td>
+                                    <td style="font-family:'JetBrains Mono',monospace;">500</td>
+                                    <td>
+                                        <div style="display:flex;align-items:center;gap:6px;">
+                                            <div class="progress-track" style="width:50px;">
+                                                <div class="progress-fill" style="width:82%;background:var(--amber);">
+                                                </div>
+                                            </div><span
+                                                style="font-size:11px;font-family:'JetBrains Mono',monospace;">412</span>
+                                        </div>
+                                    </td>
+                                    <td style="color:var(--amber);font-family:'JetBrains Mono',monospace;">180</td>
+                                    <td style="color:var(--accent);font-family:'JetBrains Mono',monospace;">32</td>
+                                    <td><span class="badge badge-amber">In Prep</span></td>
+                                </tr>
+                                <tr>
+                                    <td style="color:var(--text);">Agri-Input Shop Promo</td>
+                                    <td>Karnataka</td>
+                                    <td style="font-family:'JetBrains Mono',monospace;">60</td>
+                                    <td>
+                                        <div style="display:flex;align-items:center;gap:6px;">
+                                            <div class="progress-track" style="width:50px;">
+                                                <div class="progress-fill" style="width:52%;background:var(--amber);">
+                                                </div>
+                                            </div><span
+                                                style="font-size:11px;font-family:'JetBrains Mono',monospace;">31</span>
+                                        </div>
+                                    </td>
+                                    <td style="color:var(--amber);font-family:'JetBrains Mono',monospace;">120</td>
+                                    <td style="color:var(--accent);font-family:'JetBrains Mono',monospace;">18</td>
+                                    <td><span class="badge badge-amber">In Prep</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div><!-- /gtmexec -->
+
+            <!-- ═══ PAGE: SEGMENTATION TOOL ═══ -->
+            <div class="page" id="pg-segtool">
+                <div class="tab-bar" style="margin-bottom:18px;">
+                    <div class="tab active" onclick="segTab('opp',this)">Opportunity Map</div>
+                    <div class="tab" onclick="segTab('flora',this)">Weed Flora Hotspot</div>
+                    <div class="tab" onclick="segTab('comp',this)">Competition Battle Map</div>
+                    <div class="tab" onclick="segTab('micro',this)">Micro Market Intelligence</div>
+                </div>
+                <div id="seg-opp" style="display:block;"></div>
+                <div id="seg-flora" style="display:none;"></div>
+                <div id="seg-comp" style="display:none;"></div>
+                <div id="seg-micro" style="display:none;"></div>
+            </div><!-- /segtool -->
+
+            <!-- ═══ PAGE: PRODUCT LAUNCH ═══ -->
+            <div class="page" id="pg-prodlaunch">
+                <div class="tab-bar" style="margin-bottom:18px;">
+                    <div class="tab active" onclick="plTab('opp',this)">Opportunity Map</div>
+                    <div class="tab" onclick="plTab('matrix',this)">Weed × Area Matrix</div>
+                    <div class="tab" onclick="plTab('battle',this)">Competitor Battle Card</div>
+                    <div class="tab" onclick="plTab('roadmap',this)">Launch Roadmap</div>
+                </div>
+                <div id="pl-opp" style="display:block;"></div>
+                <div id="pl-matrix" style="display:none;"></div>
+                <div id="pl-battle" style="display:none;"></div>
+                <div id="pl-roadmap" style="display:none;"></div>
+            </div><!-- /prodlaunch -->
+
+            <!-- ═══ PAGE: CROP INTELLIGENCE ═══ -->
+            <div class="page" id="pg-cropintel">
+                <div class="info-banner" style="border-color:#e8b84b44;">
+                    <span style="font-size:18px;">🌾</span>
+                    <div>
+                        <div style="font-size:13px;color:var(--amber);font-weight:600;margin-bottom:3px;">Paddy Crop
+                            Intelligence — Kharif 2024</div>
+                        <div>Fully active with 113 species mapped, 12 geographies covered, and GTM plans generated for 4
+                            regions. Expanding to Rabi season data collection.</div>
+                    </div>
+                </div>
+
+                <!-- Crop cards -->
+                <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:16px;">
+                    <div class="crop-card active-crop">
+                        <div class="crop-emoji">🌾</div>
+                        <div class="crop-name">Paddy</div>
+                        <div style="margin-top:8px;">
+                            <div class="stat-row"><span class="stat-label" style="font-size:11px;">Weed
+                                    Species</span><span class="stat-val" style="font-size:12px;">113</span></div>
+                            <div class="stat-row"><span class="stat-label"
+                                    style="font-size:11px;">Geographies</span><span class="stat-val"
+                                    style="font-size:12px;">12</span></div>
+                        </div>
+                        <div style="margin-top:8px;"><span class="badge badge-green">Active</span></div>
+                    </div>
+                    <div class="crop-card inactive">
+                        <div class="crop-emoji">☁️</div>
+                        <div class="crop-name">Cotton</div>
+                        <div style="margin-top:10px;"><span class="badge badge-muted">Coming Soon</span></div>
+                    </div>
+                    <div class="crop-card inactive">
+                        <div class="crop-emoji">🌽</div>
+                        <div class="crop-name">Maize</div>
+                        <div style="margin-top:10px;"><span class="badge badge-muted">Coming Soon</span></div>
+                    </div>
+                    <div class="crop-card inactive">
+                        <div class="crop-emoji">🫘</div>
+                        <div class="crop-name">Soybean</div>
+                        <div style="margin-top:10px;"><span class="badge badge-muted">Coming Soon</span></div>
+                    </div>
+                    <div class="crop-card inactive">
+                        <div class="crop-emoji">🌿</div>
+                        <div class="crop-name">Wheat</div>
+                        <div style="margin-top:10px;"><span class="badge badge-muted">Coming Soon</span></div>
+                    </div>
+                    <div class="crop-card inactive">
+                        <div class="crop-emoji">🎋</div>
+                        <div class="crop-name">Sugarcane</div>
+                        <div style="margin-top:10px;"><span class="badge badge-muted">Coming Soon</span></div>
+                    </div>
+                </div>
+
+                <div class="g2">
+                    <div class="card">
+                        <div class="card-title">Paddy Season Calendar</div>
+                        <div class="stat-row"
+                            style="padding:14px 0;flex-direction:column;align-items:flex-start;gap:8px;">
+                            <div style="display:flex;justify-content:space-between;width:100%;"><span
+                                    style="color:var(--text);font-size:13px;">Kharif (June–Nov)</span><span
+                                    class="badge badge-green">Active</span></div>
+                            <span class="stat-label">Survey & GTM Execution</span>
+                            <span class="badge badge-amber">78 species</span>
+                        </div>
+                        <div class="stat-row"
+                            style="padding:14px 0;flex-direction:column;align-items:flex-start;gap:8px;">
+                            <div style="display:flex;justify-content:space-between;width:100%;"><span
+                                    style="color:var(--text);font-size:13px;">Rabi (Nov–Mar)</span><span
+                                    class="badge badge-amber">Planned</span></div>
+                            <span class="stat-label">Survey Planning</span>
+                            <span class="badge badge-amber">35 species</span>
+                        </div>
+                        <div class="stat-row"
+                            style="padding:14px 0;flex-direction:column;align-items:flex-start;gap:8px;border-bottom:none;">
+                            <div style="display:flex;justify-content:space-between;width:100%;"><span
+                                    style="color:var(--text);font-size:13px;">Summer (Mar–Jun)</span><span
+                                    class="badge badge-muted">Draft</span></div>
+                            <span class="stat-label">Repository Enrichment</span>
+                            <span class="badge badge-amber">22 species</span>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Paddy Weed Pressure by Crop Stage</div>
+                        <div style="position:relative;height:190px;"><canvas id="chartRadar"></canvas></div>
+                        <div class="radar-legend">
+                            <div class="rl-item">
+                                <div class="rl-dot" style="background:var(--accent)"></div>Grass
+                            </div>
+                            <div class="rl-item">
+                                <div class="rl-dot" style="background:var(--amber)"></div>Sedge
+                            </div>
+                            <div class="rl-item">
+                                <div class="rl-dot" style="background:var(--sage)"></div>Broadleaf
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- /cropintel -->
+
+            <!-- ═══ PAGE: ANALYTICS ═══ -->
+            <div class="page" id="pg-analytics">
+                <div class="g2" style="margin-bottom:16px;">
+                    <div class="card">
+                        <div class="card-title">Weed Prevalence — Top Species</div>
+                        <div style="position:relative;height:210px;"><canvas id="chartPrevalence"></canvas></div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Herbicide Resistance Watch</div>
+                        <div id="resistanceList" style="max-height:210px;overflow-y:auto;"></div>
+                    </div>
+                </div>
+                <div class="g3c">
+                    <div class="card">
+                        <div class="card-title">Critical Alerts</div>
+                        <div id="alertsList"></div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Product Efficacy Index (Margin %)</div>
+                        <div id="efficacyList"></div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Platform Intelligence Score</div>
+                        <div class="maturity-score">
+                            <div class="score-big">74</div>
+                            <div style="font-size:12px;color:var(--textmuted);margin-top:4px;">out of 100</div>
+                            <div style="font-size:11px;color:var(--textdim);margin-top:6px;">Weed Intelligence Maturity
+                            </div>
+                        </div>
+                        <div id="maturityDims"></div>
+                    </div>
+                </div>
+            </div><!-- /analytics -->
+
+        </div><!-- /content -->
+    </div><!-- /main -->
+
+    <script src="wd_data.js"></script>
+    <script src="weed_dashboard.js"></script>
+    <script src="seg_data.js"></script>
+    <script src="seg_tool.js"></script>
+    <script src="pl_data.js"></script>
+    <script src="pl_tool.js"></script>
+    <script>
+        /* ══════════════════════════════════════
+           DATA
+        ══════════════════════════════════════ */
+        const WEEDS = [
+            {
+                id: "W001", name: "Echinochloa crus-galli", common: "Barnyard Grass", type: "Grass", season: "Kharif",
+                geo: ["Telangana", "AP", "Karnataka"], severity: "High", control: "Pretilachlor, Bispyribac-Na", img: "🌾", prev: 87, resist: "Low",
+                photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Echinochloa_crus-galli_kz01.jpg/320px-Echinochloa_crus-galli_kz01.jpg",
+                cropStages: ["Transplanting (0–7 DAT)", "Tillering (8–30 DAT)"],
+                peakStage: "Transplanting", controlWindow: "0–15 DAT",
+                habit: "Tufted annual grass, 30–120 cm tall",
+                leaf: "Flat, linear, 15–40 cm, no ligule",
+                rootSystem: "Fibrous, shallow", economicThreshold: "5–10 plants/m²",
+                lossPercent: "40–80%", irrigation: "Flooded & Irrigated"
+            },
+
+            {
+                id: "W002", name: "Cyperus difformis", common: "Variable Flatsedge", type: "Sedge", season: "Kharif",
+                geo: ["Telangana", "Tamil Nadu"], severity: "High", control: "Pyrazosulfuron, Bensulfuron", img: "🌿", prev: 74, resist: "Medium",
+                photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Cyperus_difformis_2.jpg/320px-Cyperus_difformis_2.jpg",
+                cropStages: ["Transplanting (0–7 DAT)", "Tillering (8–30 DAT)"],
+                peakStage: "Tillering", controlWindow: "7–21 DAT",
+                habit: "Annual sedge, 10–60 cm, triangular stem",
+                leaf: "Narrow, linear, grass-like, 2–4 mm wide",
+                rootSystem: "Fibrous", economicThreshold: "15–20 plants/m²",
+                lossPercent: "25–50%", irrigation: "Flooded"
+            },
+
+            {
+                id: "W003", name: "Monochoria vaginalis", common: "Pickerelweed", type: "Broadleaf", season: "Kharif",
+                geo: ["AP", "Odisha", "WB"], severity: "Medium", control: "2,4-D, Metsulfuron", img: "🍃", prev: 61, resist: "Low",
+                photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Monochoria_vaginalis_-_stem.jpg/320px-Monochoria_vaginalis_-_stem.jpg",
+                cropStages: ["Tillering (8–30 DAT)", "Panicle Initiation (30–60 DAT)"],
+                peakStage: "Tillering", controlWindow: "15–30 DAT",
+                habit: "Aquatic annual herb, 10–40 cm",
+                leaf: "Heart-shaped, shiny, petiole inflated",
+                rootSystem: "Fibrous, floating", economicThreshold: "10 plants/m²",
+                lossPercent: "20–35%", irrigation: "Flooded"
+            },
+
+            {
+                id: "W004", name: "Ischaemum rugosum", common: "Murainagrass", type: "Grass", season: "Kharif",
+                geo: ["Kerala", "Karnataka"], severity: "High", control: "Cyhalofop-butyl, Fenoxaprop", img: "🌾", prev: 79, resist: "High",
+                photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Ischaemum_rugosum_MS_3992.jpg/320px-Ischaemum_rugosum_MS_3992.jpg",
+                cropStages: ["Transplanting (0–7 DAT)", "Tillering (8–30 DAT)"],
+                peakStage: "Transplanting", controlWindow: "5–20 DAT",
+                habit: "Annual grass, 30–80 cm, decumbent base",
+                leaf: "Flat, 10–25 cm long, hairy near ligule",
+                rootSystem: "Fibrous, stoloniferous", economicThreshold: "3–5 plants/m²",
+                lossPercent: "50–90%", irrigation: "Irrigated & Rainfed"
+            },
+
+            {
+                id: "W005", name: "Ludwigia octovalvis", common: "Water Primrose", type: "Broadleaf", season: "Kharif/Rabi",
+                geo: ["Tamil Nadu", "Kerala"], severity: "Medium", control: "2,4-D Amine", img: "🌸", prev: 45, resist: "Low",
+                photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Ludwigia_octovalvis_flowers.jpg/320px-Ludwigia_octovalvis_flowers.jpg",
+                cropStages: ["Panicle Initiation (30–60 DAT)", "Heading/Flowering"],
+                peakStage: "Panicle Initiation", controlWindow: "21–45 DAT",
+                habit: "Annual/perennial herb, 0.5–2 m tall",
+                leaf: "Lanceolate, alternate, 4–12 cm, yellow flowers",
+                rootSystem: "Taproot with aerenchyma", economicThreshold: "2–4 plants/m²",
+                lossPercent: "10–20%", irrigation: "Flooded"
+            },
+
+            {
+                id: "W006", name: "Paspalum distichum", common: "Knotgrass", type: "Grass", season: "Kharif",
+                geo: ["Punjab", "Haryana", "UP"], severity: "High", control: "Pretilachlor, Oxadiazon", img: "🌾", prev: 82, resist: "Medium",
+                photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Paspalum_distichum_JdP.jpg/320px-Paspalum_distichum_JdP.jpg",
+                cropStages: ["Transplanting (0–7 DAT)", "Tillering (8–30 DAT)"],
+                peakStage: "Tillering", controlWindow: "0–20 DAT",
+                habit: "Perennial creeping grass, 15–60 cm",
+                leaf: "Flat, 4–12 cm, smooth or hairy",
+                rootSystem: "Rhizomatous & stoloniferous", economicThreshold: "8–12 plants/m²",
+                lossPercent: "30–60%", irrigation: "Irrigated"
+            },
+
+            {
+                id: "W007", name: "Fimbristylis miliacea", common: "Globe Fimbry", type: "Sedge", season: "Kharif",
+                geo: ["Telangana", "AP"], severity: "Medium", control: "Pyrazosulfuron", img: "🌿", prev: 58, resist: "Low",
+                photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Fimbristylis_miliacea_MS_3996.jpg/320px-Fimbristylis_miliacea_MS_3996.jpg",
+                cropStages: ["Tillering (8–30 DAT)"],
+                peakStage: "Tillering", controlWindow: "10–25 DAT",
+                habit: "Annual tufted sedge, 10–50 cm",
+                leaf: "Narrow linear, 1–2 mm, smooth",
+                rootSystem: "Fibrous", economicThreshold: "20–30 plants/m²",
+                lossPercent: "15–25%", irrigation: "Flooded & Irrigated"
+            },
+
+            {
+                id: "W008", name: "Sphenoclea zeylanica", common: "Gooseweed", type: "Broadleaf", season: "Kharif",
+                geo: ["WB", "Bihar", "UP"], severity: "Medium", control: "Metsulfuron+Chlorimuron", img: "🍂", prev: 52, resist: "Low",
+                photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Sphenoclea_zeylanica_MS_3990.jpg/320px-Sphenoclea_zeylanica_MS_3990.jpg",
+                cropStages: ["Tillering (8–30 DAT)", "Panicle Initiation (30–60 DAT)"],
+                peakStage: "Tillering", controlWindow: "15–35 DAT",
+                habit: "Succulent annual herb, 20–80 cm",
+                leaf: "Oblong-elliptic, alternate, pale green",
+                rootSystem: "Taproot", economicThreshold: "5–8 plants/m²",
+                lossPercent: "15–30%", irrigation: "Flooded"
+            },
+        ];
+
+        const GEO = [
+            { region: "Telangana", surveys: 142, weeds: 18, coverage: 78, pipeline: 24.5, gtmReady: true },
+            { region: "Andhra Pradesh", surveys: 118, weeds: 15, coverage: 65, pipeline: 19.2, gtmReady: true },
+            { region: "Karnataka", surveys: 96, weeds: 14, coverage: 58, pipeline: 16.8, gtmReady: true },
+            { region: "Tamil Nadu", surveys: 87, weeds: 12, coverage: 52, pipeline: 14.1, gtmReady: false },
+            { region: "Kerala", surveys: 64, weeds: 10, coverage: 41, pipeline: 9.8, gtmReady: false },
+            { region: "Maharashtra", surveys: 54, weeds: 8, coverage: 34, pipeline: 8.2, gtmReady: false },
+            { region: "UP", surveys: 41, weeds: 11, coverage: 28, pipeline: 6.4, gtmReady: false },
+            { region: "Punjab", surveys: 38, weeds: 7, coverage: 25, pipeline: 5.9, gtmReady: false },
+        ];
+
+        const GTM_PLANS = [
+            { region: "Telangana", pressure: "Barnyard+Sedge", primary: "HerboPro Max", secondary: "SedgeClear", channel: "Dealer + FPO", farmers: 2400, revenue: 18.4, stage: "Active", conv: 23 },
+            { region: "AP", pressure: "Barnyard+Broadleaf", primary: "WeedOut Gold", secondary: "BroadShield", channel: "Dealer", farmers: 1960, revenue: 15.2, stage: "Active", conv: 19 },
+            { region: "Karnataka", pressure: "Murainagrass", primary: "GrassKill Pro", secondary: "HerboPro Max", channel: "FPO + Agri-Input", farmers: 1540, revenue: 12.8, stage: "In Prep", conv: 14 },
+            { region: "Tamil Nadu", pressure: "Sedge+Broadleaf", primary: "SedgeClear", secondary: "BroadShield", channel: "Dealer", farmers: 1280, revenue: 10.1, stage: "Draft", conv: 8 },
+        ];
+
+        const COLORS = {
+            accent: "#6abf7b", amber: "#e8b84b", sage: "#8dc49a",
+            blue: "#5ca8e0", purple: "#9b7be0", red: "#e05c5c",
+            border: "#1e3d27", bg: "#0b1a10", card: "#182e1f",
+            textdim: "#7aaa87", surface: "#122118", green1: "#2d6a3f", green2: "#3d8f55"
+        };
+
+        const PAGE_META = {
+            dashboard: { title: "Weed Intelligence Dashboard", sub: "Paddy — Kharif 2024 · South India" },
+            weedrepo: { title: "Weed Repository", sub: "Knowledge Graph · 113 Species · 12 Geographies" },
+            fieldsurvey: { title: "Field Survey Module", sub: "Geo-tagged data collection & agent management" },
+            gtmbuilder: { title: "GTM Strategy Builder", sub: "Algorithm-driven area-wise go-to-market planning" },
+            gtmexec: { title: "GTM Execution", sub: "Demand generation · Trial management · Sales conversion" },
+            cropintel: { title: "Crop Intelligence", sub: "Multi-crop weed intelligence · Paddy active" },
+            analytics: { title: "Analytics & Insights", sub: "Resistance tracking · Coverage gaps · Platform maturity" },
+            weeddashboard: { title: "Weed Dashboard", sub: "State-wise mandal-level weed intelligence" },
+            segtool: { title: "Segmentation Tool", sub: "Market opportunity · Weed flora · Competition · Micro intelligence" },
+            prodlaunch: { title: "Product Launch", sub: "Launch roadmap · Opportunity mapping · Wave planning" },
+        };
+
+        /* ══════════════════════════════════════
+           NAVIGATION
+        ══════════════════════════════════════ */
+        function nav(pageId, el) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById('pg-' + pageId).classList.add('active');
+            el.classList.add('active');
+            document.getElementById('topTitle').textContent = PAGE_META[pageId].title;
+            document.getElementById('topSub').textContent = PAGE_META[pageId].sub;
+            initPage(pageId);
+        }
+
+        const initDone = {};
+        function initPage(id) {
+            if (id === 'weeddashboard') { renderWeedDashboard(); return; }
+            if (id === 'segtool') { renderSegTool(); return; }
+            if (id === 'prodlaunch') { renderProdLaunch(); return; }
+            if (initDone[id]) return;
+            initDone[id] = true;
+            if (id === 'weedrepo') { renderWeedGrid('All'); drawKGLines(); }
+            if (id === 'gtmbuilder') { renderGTMCards(); }
+            if (id === 'gtmexec') { renderSalesFunnel(); buildExecPipelineChart(); }
+            if (id === 'cropintel') { buildRadarChart(); }
+            if (id === 'analytics') { buildAnalyticsPage(); }
+            if (id === 'fieldsurvey') { buildChecklistAndHistory(); }
+        }
+
+        /* ══════════════════════════════════════
+           CHART DEFAULTS
+        ══════════════════════════════════════ */
+        Chart.defaults.color = COLORS.textdim;
+        Chart.defaults.borderColor = COLORS.border;
+        Chart.defaults.font.family = "'JetBrains Mono', monospace";
+
+        /* ══════════════════════════════════════
+           DASHBOARD CHARTS
+        ══════════════════════════════════════ */
+        window.addEventListener('DOMContentLoaded', () => {
+            // Growth area chart
+            const trendData = {
+                labels: ['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr'],
+                surveys: [28, 45, 62, 89, 124, 178, 205],
+                weeds: [6, 9, 12, 15, 17, 18, 18],
+            };
+            new Chart(document.getElementById('chartGrowth'), {
+                type: 'line',
+                data: {
+                    labels: trendData.labels,
+                    datasets: [
+                        { label: 'Surveys', data: trendData.surveys, borderColor: COLORS.accent, backgroundColor: '#6abf7b22', fill: true, tension: .4, pointRadius: 3 },
+                        { label: 'Weed Spp.', data: trendData.weeds, borderColor: COLORS.amber, backgroundColor: 'transparent', tension: .4, pointRadius: 3, yAxisID: 'y2' },
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { labels: { boxWidth: 10, font: { size: 10 } } } },
+                    scales: {
+                        x: { grid: { color: COLORS.border }, ticks: { font: { size: 10 } } },
+                        y: { grid: { color: COLORS.border }, ticks: { font: { size: 10 } } },
+                        y2: { position: 'right', grid: { display: false }, ticks: { font: { size: 10 } } },
+                    }
+                }
+            });
+
+            // Weed type doughnut
+            new Chart(document.getElementById('chartWeedType'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Grass', 'Sedge', 'Broadleaf', 'Aquatic'],
+                    datasets: [{ data: [42, 28, 31, 12], backgroundColor: [COLORS.accent, COLORS.amber, COLORS.sage, COLORS.blue], borderWidth: 0, hoverOffset: 4 }]
+                },
+                options: { responsive: false, plugins: { legend: { display: false } }, cutout: '55%' }
+            });
+
+            // Revenue chart
+            new Chart(document.getElementById('chartRevenue'), {
+                type: 'bar',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr'],
+                    datasets: [
+                        { label: 'Target', data: [8.2, 12.5, 18.0, 24.0], backgroundColor: COLORS.border, borderRadius: 4 },
+                        { label: 'Actual', data: [6.4, 9.8, 14.2, 19.6], backgroundColor: COLORS.amber, borderRadius: 4 },
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { labels: { boxWidth: 10, font: { size: 10 } } } },
+                    scales: { x: { grid: { display: false }, ticks: { font: { size: 10 } } }, y: { grid: { color: COLORS.border }, ticks: { font: { size: 10 } } } }
+                }
+            });
+
+            // Pipeline funnel (custom HTML)
+            const FUNNEL = [
+                { label: 'Weed Identified', val: 6840, color: COLORS.accent },
+                { label: 'GTM Mapped', val: 4920, color: COLORS.amber },
+                { label: 'Demand Generated', val: 3110, color: COLORS.green2 },
+                { label: 'Trial Conducted', val: 1890, color: COLORS.sage },
+                { label: 'Order Placed', val: 940, color: COLORS.border },
+            ];
+            const pf = document.getElementById('pipelineFunnel');
+            pf.innerHTML = FUNNEL.map(f => `
+    <div class="funnel-step">
+      <div class="funnel-lbl">${f.label}</div>
+      <div class="funnel-track">
+        <div class="funnel-fill" style="width:${(f.val / 6840 * 100).toFixed(0)}%;background:${f.color};color:${f.color === COLORS.border ? COLORS.textdim : '#0b1a10'}">
+          ${f.val.toLocaleString()}
+        </div>
+      </div>
+    </div>`).join('');
+
+            // Geo table
+            const tb = document.getElementById('geoTableBody');
+            tb.innerHTML = GEO.map(g => {
+                const col = g.coverage > 60 ? COLORS.accent : g.coverage > 40 ? COLORS.amber : COLORS.textdim;
+                return `<tr>
+      <td style="color:var(--text);font-weight:500;">${g.region}</td>
+      <td style="font-family:'JetBrains Mono',monospace;">${g.surveys}</td>
+      <td style="font-family:'JetBrains Mono',monospace;">${g.weeds}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div class="progress-track" style="width:60px;">
+            <div class="progress-fill" style="width:${g.coverage}%;background:${col};"></div>
+          </div>
+          <span style="font-size:11px;font-family:'JetBrains Mono',monospace;">${g.coverage}%</span>
+        </div>
+      </td>
+      <td style="color:var(--amber);font-family:'JetBrains Mono',monospace;">${g.pipeline}</td>
+      <td>${g.gtmReady ? '<span class="badge badge-green">✓ Ready</span>' : '<span class="badge badge-muted">Pending</span>'}</td>
+    </tr>`;
+            }).join('');
+        });
+
+        /* ══════════════════════════════════════
+           WEED REPOSITORY
+        ══════════════════════════════════════ */
+        function filterWeeds(type, btn) {
+            document.querySelectorAll('.filter-btn').forEach(b => b.className = 'btn btn-outline filter-btn');
+            if (btn) { btn.className = 'btn btn-primary filter-btn'; }
+            renderWeedGrid(type);
+        }
+        // Attach filter-btn class to buttons after load
+        document.querySelectorAll('[onclick^="filterWeeds"]').forEach(b => b.classList.add('filter-btn'));
+
+        function renderWeedGrid(type) {
+            const filtered = type === 'All' ? WEEDS : WEEDS.filter(w => w.type === type);
+            document.getElementById('weedCount').textContent = filtered.length + ' species in repository';
+            const grid = document.getElementById('weedGrid');
+            grid.innerHTML = filtered.map(w => {
+                const sevClass = w.severity === 'High' ? 'badge-red' : w.severity === 'Medium' ? 'badge-amber' : 'badge-green';
+                const resistCol = w.resist === 'High' ? COLORS.red : w.resist === 'Medium' ? COLORS.amber : COLORS.accent;
+                const stageBar = ['Transplanting (0–7 DAT)', 'Tillering (8–30 DAT)', 'Panicle Initiation (30–60 DAT)', 'Heading/Flowering']
+                    .map(s => {
+                        const active = w.cropStages.includes(s);
+                        const isPeak = s.startsWith(w.peakStage);
+                        return `<div style="flex:1;height:5px;border-radius:2px;background:${isPeak ? COLORS.red : active ? COLORS.amber : COLORS.border};
+                     position:relative;" title="${s}${isPeak ? ' (PEAK)' : ''}">
+                  ${isPeak ? `<div style="position:absolute;top:-8px;left:50%;transform:translateX(-50%);font-size:8px;color:${COLORS.red};">▼</div>` : ''}
+                </div>`;
+                    }).join('<div style="width:2px;"></div>');
+
+                return `
+    <div class="weed-card" id="wc-${w.id}" onclick="toggleWeedCard('${w.id}')">
+      <!-- Image -->
+      <div style="position:relative;width:100%;height:130px;border-radius:8px;overflow:hidden;margin-bottom:10px;background:var(--surface);">
+        <img src="${w.photo}" alt="${w.common}"
+          style="width:100%;height:100%;object-fit:cover;"
+          onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+        <div style="display:none;width:100%;height:100%;align-items:center;justify-content:center;flex-direction:column;gap:4px;background:var(--surface);">
+          <span style="font-size:36px;">${w.img}</span>
+          <span style="font-size:10px;color:var(--textmuted);">Image unavailable</span>
+        </div>
+        <div style="position:absolute;top:6px;right:6px;"><span class="badge ${sevClass}">${w.severity}</span></div>
+        <div style="position:absolute;bottom:0;left:0;right:0;padding:4px 8px;background:linear-gradient(transparent,#0b1a10cc);
+                    font-size:9px;font-family:'JetBrains Mono',monospace;color:var(--textmuted);">${w.id}</div>
+      </div>
+
+      <!-- Header -->
+      <div class="weed-name">${w.name}</div>
+      <div class="weed-common">${w.common}</div>
+
+      <!-- Tags -->
+      <div class="weed-tags" style="margin-top:6px;">
+        <span class="tag tag-${w.type.toLowerCase()}">${w.type}</span>
+        <span class="tag tag-season">${w.season}</span>
+        ${w.resist !== 'Low' ? `<span class="tag tag-resist">Resist: ${w.resist}</span>` : ''}
+      </div>
+
+      <!-- Crop stage occurrence bar -->
+      <div style="margin-top:10px;">
+        <div style="font-size:9px;color:var(--textmuted);font-family:'JetBrains Mono',monospace;margin-bottom:5px;letter-spacing:1px;">CROP STAGE OCCURRENCE</div>
+        <div style="display:flex;gap:2px;align-items:center;">${stageBar}</div>
+        <div style="display:flex;justify-content:space-between;margin-top:3px;">
+          <span style="font-size:8px;color:var(--textmuted);">Transplant</span>
+          <span style="font-size:8px;color:var(--textmuted);">Tiller</span>
+          <span style="font-size:8px;color:var(--textmuted);">PI</span>
+          <span style="font-size:8px;color:var(--textmuted);">Heading</span>
+        </div>
+      </div>
+
+      <!-- Prevalence -->
+      <div class="pill-bar"><div class="pill-fill" style="width:${w.prev}%;"></div></div>
+      <div style="font-size:10px;color:var(--textmuted);margin-top:4px;font-family:'JetBrains Mono',monospace;">
+        Prevalence: ${w.prev}% · Loss: ${w.lossPercent}
+      </div>
+
+      <!-- Quick stats -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px;">
+        <div style="background:var(--surface);border-radius:6px;padding:5px 8px;">
+          <div style="font-size:9px;color:var(--textmuted);margin-bottom:1px;">CONTROL WINDOW</div>
+          <div style="font-size:11px;color:var(--amber);font-family:'JetBrains Mono',monospace;">${w.controlWindow}</div>
+        </div>
+        <div style="background:var(--surface);border-radius:6px;padding:5px 8px;">
+          <div style="font-size:9px;color:var(--textmuted);margin-bottom:1px;">ECO. THRESHOLD</div>
+          <div style="font-size:11px;color:var(--sage);font-family:'JetBrains Mono',monospace;">${w.economicThreshold}</div>
+        </div>
+      </div>
+
+      <!-- Expandable detail -->
+      <div class="weed-detail">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;">
+          <div style="background:var(--surface);border-radius:6px;padding:6px 10px;">
+            <div style="font-size:9px;color:var(--textmuted);margin-bottom:2px;">GROWTH HABIT</div>
+            <div style="font-size:11px;color:var(--textdim);">${w.habit}</div>
+          </div>
+          <div style="background:var(--surface);border-radius:6px;padding:6px 10px;">
+            <div style="font-size:9px;color:var(--textmuted);margin-bottom:2px;">LEAF MORPHOLOGY</div>
+            <div style="font-size:11px;color:var(--textdim);">${w.leaf}</div>
+          </div>
+          <div style="background:var(--surface);border-radius:6px;padding:6px 10px;">
+            <div style="font-size:9px;color:var(--textmuted);margin-bottom:2px;">ROOT SYSTEM</div>
+            <div style="font-size:11px;color:var(--textdim);">${w.rootSystem}</div>
+          </div>
+          <div style="background:var(--surface);border-radius:6px;padding:6px 10px;">
+            <div style="font-size:9px;color:var(--textmuted);margin-bottom:2px;">IRRIGATION TYPE</div>
+            <div style="font-size:11px;color:var(--blue);">${w.irrigation}</div>
+          </div>
+        </div>
+        <div style="font-size:11px;color:var(--textmuted);margin-bottom:5px;font-family:'JetBrains Mono',monospace;">GEOGRAPHIES</div>
+        <div>${w.geo.map(g => `<span class="chip">${g}</span>`).join('')}</div>
+        <div style="font-size:11px;color:var(--textmuted);margin-top:10px;margin-bottom:4px;font-family:'JetBrains Mono',monospace;">RECOMMENDED HERBICIDE</div>
+        <div style="font-size:12px;color:var(--amber);font-weight:500;">${w.control}</div>
+        <div style="display:flex;gap:6px;margin-top:10px;">
+          <div style="flex:1;background:${resistCol}22;border:1px solid ${resistCol}44;border-radius:6px;padding:5px 8px;text-align:center;">
+            <div style="font-size:9px;color:var(--textmuted);">RESISTANCE</div>
+            <div style="font-size:12px;color:${resistCol};font-weight:600;">${w.resist}</div>
+          </div>
+          <div style="flex:1;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:5px 8px;text-align:center;">
+            <div style="font-size:9px;color:var(--textmuted);">PEAK STAGE</div>
+            <div style="font-size:11px;color:var(--text);">${w.peakStage}</div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+            }).join('');
+        }
+
+        function toggleWeedCard(id) {
+            document.getElementById('wc-' + id).classList.toggle('open');
+        }
+
+        function drawKGLines() {
+            const svg = document.getElementById('kg-svg');
+            const wrap = document.getElementById('kg-wrap');
+            const cx = wrap.clientWidth / 2, cy = wrap.clientHeight / 2;
+            const clusters = [
+                { x: 0.08, y: 0.18, color: '#6abf7b' }, { x: 0.88, y: 0.10, color: '#e8b84b' },
+                { x: 0.88, y: 0.80, color: '#8dc49a' }, { x: 0.06, y: 0.78, color: '#9b7be0' },
+                { x: 0.42, y: 0.04, color: '#5ca8e0' },
+            ];
+            svg.innerHTML = clusters.map(c => {
+                const x2 = (c.x * wrap.clientWidth), y2 = (c.y * wrap.clientHeight);
+                return `<line x1="${cx}" y1="${cy}" x2="${x2 + 60}" y2="${y2 + 40}" stroke="${c.color}" stroke-width="1" stroke-dasharray="5,4" opacity="0.45"/>`;
+            }).join('');
+        }
+
+        /* ══════════════════════════════════════
+           AREA INTELLIGENCE
+        ══════════════════════════════════════ */
+        const AREA_INTEL = {
+            "Telangana": {
+                surveys: 142, weeds: 18, coverage: 78, gtmStage: "Active", gtmConv: 23,
+                target: 2400, activated: 552, trials: 380, orders: 127, revenue: 18.4,
+                topWeeds: [{ id: "W001", name: "Barnyard Grass", prev: 87, type: "Grass", sev: "High" },
+                { id: "W002", name: "Variable Flatsedge", prev: 74, type: "Sedge", sev: "High" },
+                { id: "W007", name: "Globe Fimbry", prev: 58, type: "Sedge", sev: "Medium" }],
+                products: ["HerboPro Max", "SedgeClear"], channel: "Dealer + FPO",
+                demandActs: 9, demandLeads: 340, pipeline: 24.5
+            },
+
+            "Andhra Pradesh": {
+                surveys: 118, weeds: 15, coverage: 65, gtmStage: "Active", gtmConv: 19,
+                target: 1960, activated: 372, trials: 240, orders: 84, revenue: 15.2,
+                topWeeds: [{ id: "W001", name: "Barnyard Grass", prev: 82, type: "Grass", sev: "High" },
+                { id: "W003", name: "Pickerelweed", prev: 61, type: "Broadleaf", sev: "Medium" },
+                { id: "W007", name: "Globe Fimbry", prev: 54, type: "Sedge", sev: "Medium" }],
+                products: ["WeedOut Gold", "BroadShield"], channel: "Dealer",
+                demandActs: 7, demandLeads: 210, pipeline: 19.2
+            },
+
+            "Karnataka": {
+                surveys: 96, weeds: 14, coverage: 58, gtmStage: "In Prep", gtmConv: 14,
+                target: 1540, activated: 216, trials: 130, orders: 38, revenue: 12.8,
+                topWeeds: [{ id: "W004", name: "Murainagrass", prev: 79, type: "Grass", sev: "High" },
+                { id: "W001", name: "Barnyard Grass", prev: 68, type: "Grass", sev: "High" },
+                { id: "W005", name: "Water Primrose", prev: 40, type: "Broadleaf", sev: "Medium" }],
+                products: ["GrassKill Pro", "HerboPro Max"], channel: "FPO + Agri-Input",
+                demandActs: 5, demandLeads: 120, pipeline: 16.8
+            },
+
+            "Tamil Nadu": {
+                surveys: 87, weeds: 12, coverage: 52, gtmStage: "Draft", gtmConv: 8,
+                target: 1280, activated: 102, trials: 60, orders: 14, revenue: 10.1,
+                topWeeds: [{ id: "W002", name: "Variable Flatsedge", prev: 70, type: "Sedge", sev: "High" },
+                { id: "W005", name: "Water Primrose", prev: 45, type: "Broadleaf", sev: "Medium" },
+                { id: "W003", name: "Pickerelweed", prev: 38, type: "Broadleaf", sev: "Medium" }],
+                products: ["SedgeClear", "BroadShield"], channel: "Dealer",
+                demandActs: 3, demandLeads: 65, pipeline: 14.1
+            },
+
+            "Kerala": {
+                surveys: 64, weeds: 10, coverage: 41, gtmStage: "Draft", gtmConv: 6,
+                target: 900, activated: 54, trials: 28, orders: 8, revenue: 9.8,
+                topWeeds: [{ id: "W004", name: "Murainagrass", prev: 79, type: "Grass", sev: "High" },
+                { id: "W005", name: "Water Primrose", prev: 45, type: "Broadleaf", sev: "Medium" }],
+                products: ["GrassKill Pro", "BroadShield"], channel: "Dealer",
+                demandActs: 2, demandLeads: 40, pipeline: 9.8
+            },
+
+            "Maharashtra": {
+                surveys: 54, weeds: 8, coverage: 34, gtmStage: "Pending", gtmConv: 0,
+                target: 0, activated: 0, trials: 0, orders: 0, revenue: 8.2,
+                topWeeds: [{ id: "W001", name: "Barnyard Grass", prev: 75, type: "Grass", sev: "High" },
+                { id: "W006", name: "Knotgrass", prev: 60, type: "Grass", sev: "High" }],
+                products: ["HerboPro Max"], channel: "TBD",
+                demandActs: 0, demandLeads: 0, pipeline: 8.2
+            },
+
+            "UP": {
+                surveys: 41, weeds: 11, coverage: 28, gtmStage: "Pending", gtmConv: 0,
+                target: 0, activated: 0, trials: 0, orders: 0, revenue: 6.4,
+                topWeeds: [{ id: "W006", name: "Knotgrass", prev: 82, type: "Grass", sev: "High" },
+                { id: "W008", name: "Gooseweed", prev: 52, type: "Broadleaf", sev: "Medium" }],
+                products: ["Pretilachlor"], channel: "TBD",
+                demandActs: 0, demandLeads: 0, pipeline: 6.4
+            },
+
+            "Punjab": {
+                surveys: 38, weeds: 7, coverage: 25, gtmStage: "Pending", gtmConv: 0,
+                target: 0, activated: 0, trials: 0, orders: 0, revenue: 5.9,
+                topWeeds: [{ id: "W006", name: "Knotgrass", prev: 88, type: "Grass", sev: "High" }],
+                products: ["Pretilachlor", "Oxadiazon"], channel: "TBD",
+                demandActs: 0, demandLeads: 0, pipeline: 5.9
+            },
+        };
+
+        const WEED_AREA_MATRIX = {
+            "Barnyard Grass": { Telangana: 87, AP: 82, Karnataka: 68, TamilNadu: 40, Kerala: 20, Maharashtra: 75, UP: 55, Punjab: 60 },
+            "Variable Flatsedge": { Telangana: 74, AP: 54, Karnataka: 30, TamilNadu: 70, Kerala: 20, Maharashtra: 20, UP: 15, Punjab: 10 },
+            "Pickerelweed": { Telangana: 30, AP: 61, Karnataka: 20, TamilNadu: 38, Kerala: 30, Maharashtra: 15, UP: 35, Punjab: 10 },
+            "Murainagrass": { Telangana: 20, AP: 30, Karnataka: 79, TamilNadu: 25, Kerala: 79, Maharashtra: 15, UP: 10, Punjab: 8 },
+            "Water Primrose": { Telangana: 20, AP: 25, Karnataka: 40, TamilNadu: 45, Kerala: 45, Maharashtra: 10, UP: 10, Punjab: 5 },
+            "Knotgrass": { Telangana: 15, AP: 20, Karnataka: 25, TamilNadu: 20, Kerala: 15, Maharashtra: 60, UP: 82, Punjab: 88 },
+            "Globe Fimbry": { Telangana: 58, AP: 54, Karnataka: 30, TamilNadu: 35, Kerala: 20, Maharashtra: 20, UP: 20, Punjab: 15 },
+            "Gooseweed": { Telangana: 20, AP: 30, Karnataka: 20, TamilNadu: 25, Kerala: 20, Maharashtra: 25, UP: 52, Punjab: 35 },
+        };
+
+        function switchKGTab(tab, el) {
+            document.querySelectorAll('.kgtab').forEach(t => {
+                t.style.background = 'transparent'; t.style.color = 'var(--textdim)';
+            });
+            el.style.background = 'var(--card)'; el.style.color = 'var(--text)';
+            document.getElementById('kgTabKG').style.display = tab === 'kg' ? 'block' : 'none';
+            document.getElementById('kgTabArea').style.display = tab === 'area' ? 'block' : 'none';
+            if (tab === 'area') buildAreaIntelligence();
+        }
+
+        let selectedArea = null;
+
+        function buildAreaIntelligence() {
+            const list = document.getElementById('areaList');
+            const regions = Object.keys(AREA_INTEL);
+            const maxPipeline = Math.max(...regions.map(r => AREA_INTEL[r].pipeline));
+
+            list.innerHTML = regions.map(r => {
+                const d = AREA_INTEL[r];
+                const stageColor = d.gtmStage === 'Active' ? COLORS.accent : d.gtmStage === 'In Prep' ? COLORS.amber :
+                    d.gtmStage === 'Draft' ? COLORS.textdim : COLORS.textmuted;
+                const intensityPct = (d.pipeline / maxPipeline * 100).toFixed(0);
+                return `
+    <div onclick="selectArea('${r}')" id="areaBtn-${r.replace(' ', '-')}"
+      style="padding:10px 12px;border-radius:8px;border:1px solid var(--border);
+             background:var(--surface);cursor:pointer;transition:all .15s;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;">
+        <span style="font-size:13px;color:var(--text);font-weight:500;">📍 ${r}</span>
+        <span style="font-size:10px;padding:2px 8px;border-radius:10px;
+                     background:${stageColor}22;color:${stageColor};
+                     border:1px solid ${stageColor}44;font-family:'JetBrains Mono',monospace;">${d.gtmStage}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--textmuted);margin-bottom:4px;">
+        <span>${d.surveys} surveys</span>
+        <span>${d.weeds} species</span>
+        <span>₹${d.pipeline}L</span>
+      </div>
+      <div style="height:3px;background:var(--border);border-radius:2px;">
+        <div style="height:100%;width:${intensityPct}%;border-radius:2px;
+                    background:${stageColor};transition:width .4s;"></div>
+      </div>
+    </div>`;
+            }).join('');
+
+            buildHeatmap();
+            // Auto-select first
+            selectArea('Telangana');
+        }
+
+        function selectArea(region) {
+            selectedArea = region;
+            const d = AREA_INTEL[region];
+
+            // Highlight selected in list
+            document.querySelectorAll('[id^="areaBtn-"]').forEach(b => {
+                b.style.background = 'var(--surface)'; b.style.borderColor = 'var(--border)';
+            });
+            const btn = document.getElementById('areaBtn-' + region.replace(' ', '-'));
+            if (btn) { btn.style.background = 'var(--card)'; btn.style.borderColor = 'var(--accent)'; }
+
+            const stageColor = d.gtmStage === 'Active' ? COLORS.accent : d.gtmStage === 'In Prep' ? COLORS.amber :
+                d.gtmStage === 'Draft' ? COLORS.textdim : COLORS.textmuted;
+
+            // Funnel percentages
+            const fBase = d.target || 1;
+            const fSteps = [
+                { l: "GTM Target", v: d.target || 0, pct: 100, c: COLORS.border },
+                { l: "Activated", v: d.activated, pct: d.target ? Math.round(d.activated / d.target * 100) : 0, c: COLORS.green1 },
+                { l: "Trial Done", v: d.trials, pct: d.target ? Math.round(d.trials / d.target * 100) : 0, c: COLORS.accent },
+                { l: "Orders", v: d.orders, pct: d.target ? Math.round(d.orders / d.target * 100) : 0, c: COLORS.amber },
+            ];
+
+            // Weed bars
+            const weedBars = d.topWeeds.map(w => {
+                const tc = { Grass: COLORS.accent, Sedge: COLORS.amber, Broadleaf: COLORS.sage }[w.type] || COLORS.accent;
+                const sc = w.sev === 'High' ? COLORS.red : COLORS.amber;
+                return `
+    <div style="margin-bottom:8px;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:3px;align-items:center;">
+        <div style="display:flex;align-items:center;gap:6px;">
+          <div style="width:8px;height:8px;border-radius:50%;background:${tc};"></div>
+          <span style="font-size:12px;color:var(--textdim);">${w.name}</span>
+          <span style="font-size:9px;padding:1px 6px;border-radius:4px;background:${sc}22;color:${sc};">${w.sev}</span>
+        </div>
+        <span style="font-size:11px;color:${tc};font-family:'JetBrains Mono',monospace;">${w.prev}%</span>
+      </div>
+      <div style="height:4px;background:var(--border);border-radius:2px;">
+        <div style="height:100%;width:${w.prev}%;background:${tc};border-radius:2px;"></div>
+      </div>
+    </div>`;
+            }).join('');
+
+            document.getElementById('areaDetailPanel').innerHTML = `
+    <div style="animation:fadeIn .3s ease;">
+      <!-- Header -->
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;">
+        <div>
+          <div style="font-family:'Playfair Display',serif;font-size:18px;color:var(--text);">📍 ${region}</div>
+          <div style="font-size:11px;color:var(--textmuted);margin-top:2px;">${d.surveys} surveys · ${d.weeds} weed species · ${d.coverage}% coverage</div>
+        </div>
+        <span style="padding:4px 12px;border-radius:20px;font-size:11px;
+                     background:${stageColor}22;color:${stageColor};
+                     border:1px solid ${stageColor}44;font-family:'JetBrains Mono',monospace;">${d.gtmStage}</span>
+      </div>
+
+      <!-- 4 KPI tiles -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin-bottom:14px;">
+        <div style="background:var(--surface);border-radius:8px;padding:9px 10px;border:1px solid var(--border);">
+          <div style="font-size:9px;color:var(--textmuted);font-family:'JetBrains Mono',monospace;margin-bottom:3px;">PIPELINE</div>
+          <div style="font-size:18px;font-family:'Playfair Display',serif;color:var(--amber);">₹${d.pipeline}L</div>
+        </div>
+        <div style="background:var(--surface);border-radius:8px;padding:9px 10px;border:1px solid var(--border);">
+          <div style="font-size:9px;color:var(--textmuted);font-family:'JetBrains Mono',monospace;margin-bottom:3px;">CONV. RATE</div>
+          <div style="font-size:18px;font-family:'Playfair Display',serif;color:var(--accent);">${d.gtmConv}%</div>
+        </div>
+        <div style="background:var(--surface);border-radius:8px;padding:9px 10px;border:1px solid var(--border);">
+          <div style="font-size:9px;color:var(--textmuted);font-family:'JetBrains Mono',monospace;margin-bottom:3px;">DEM. ACTS</div>
+          <div style="font-size:18px;font-family:'Playfair Display',serif;color:var(--blue);">${d.demandActs}</div>
+        </div>
+        <div style="background:var(--surface);border-radius:8px;padding:9px 10px;border:1px solid var(--border);">
+          <div style="font-size:9px;color:var(--textmuted);font-family:'JetBrains Mono',monospace;margin-bottom:3px;">LEADS</div>
+          <div style="font-size:18px;font-family:'Playfair Display',serif;color:var(--purple);">${d.demandLeads}</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <!-- Weed prevalence -->
+        <div style="background:var(--surface);border-radius:10px;padding:12px;border:1px solid var(--border);">
+          <div style="font-size:10px;color:var(--textmuted);font-family:'JetBrains Mono',monospace;
+                      margin-bottom:10px;letter-spacing:1px;">TOP WEEDS BY PREVALENCE</div>
+          ${weedBars}
+          <div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--border);">
+            <div style="font-size:10px;color:var(--textmuted);margin-bottom:5px;font-family:'JetBrains Mono',monospace;">RECOMMENDED PRODUCTS</div>
+            ${d.products.map(p => `<span style="display:inline-block;margin:2px;padding:3px 9px;border-radius:5px;
+              font-size:10px;background:#5ca8e022;color:var(--blue);border:1px solid #5ca8e033;">${p}</span>`).join('')}
+          </div>
+          <div style="margin-top:8px;">
+            <div style="font-size:10px;color:var(--textmuted);margin-bottom:4px;font-family:'JetBrains Mono',monospace;">CHANNEL</div>
+            <div style="font-size:12px;color:var(--textdim);">${d.channel}</div>
+          </div>
+        </div>
+
+        <!-- GTM demand funnel -->
+        <div style="background:var(--surface);border-radius:10px;padding:12px;border:1px solid var(--border);">
+          <div style="font-size:10px;color:var(--textmuted);font-family:'JetBrains Mono',monospace;
+                      margin-bottom:10px;letter-spacing:1px;">DEMAND GEN FUNNEL</div>
+          ${fSteps.map(s => `
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:7px;">
+              <div style="font-size:10px;color:var(--textdim);width:78px;flex-shrink:0;">${s.l}</div>
+              <div style="flex:1;height:18px;background:var(--border);border-radius:3px;overflow:hidden;">
+                <div style="height:100%;width:${s.pct}%;background:${s.c};border-radius:3px;
+                            display:flex;align-items:center;padding-left:6px;">
+                  <span style="font-size:9px;font-weight:600;color:${s.c === COLORS.border ? COLORS.textdim : '#0b1a10'};">
+                    ${s.v.toLocaleString()}
+                  </span>
+                </div>
+              </div>
+              <div style="width:26px;text-align:right;font-size:10px;color:var(--textmuted);
+                          font-family:'JetBrains Mono',monospace;">${s.pct}%</div>
+            </div>`).join('')}
+
+          ${d.gtmStage === 'Pending' ? `
+            <div style="margin-top:12px;padding:10px;background:#e8b84b11;border:1px solid #e8b84b33;
+                        border-radius:8px;font-size:11px;color:var(--amber);">
+              ⚠️ GTM plan not yet initiated. ${d.surveys} surveys complete — ready to plan.
+            </div>`:
+                    d.gtmStage === 'Draft' ? `
+            <div style="margin-top:12px;padding:10px;background:#9b7be011;border:1px solid #9b7be033;
+                        border-radius:8px;font-size:11px;color:var(--purple);">
+              📝 GTM plan in draft. Review weed data and finalize product-channel mapping.
+            </div>`: `
+            <div style="margin-top:12px;display:flex;gap:6px;">
+              <button class="btn btn-outline" onclick="nav('gtmbuilder',document.querySelector('[onclick*=gtmbuilder]'))"
+                style="flex:1;font-size:11px;padding:7px;">View GTM →</button>
+              <button class="btn btn-outline" onclick="nav('gtmexec',document.querySelector('[onclick*=gtmexec]'))"
+                style="flex:1;font-size:11px;padding:7px;">Track Exec →</button>
+            </div>`}
+        </div>
+      </div>
+    </div>`;
+        }
+
+        function buildHeatmap() {
+            const regions = ['Telangana', 'AP', 'Karnataka', 'TamilNadu', 'Kerala', 'Maharashtra', 'UP', 'Punjab'];
+            const weeds = Object.keys(WEED_AREA_MATRIX);
+            const table = document.getElementById('heatmapTable');
+            const header = `<tr>
+    <th style="padding:6px 10px;text-align:left;font-size:10px;color:var(--textmuted);
+               font-family:'JetBrains Mono',monospace;border-bottom:1px solid var(--border);
+               white-space:nowrap;min-width:140px;">Weed Species</th>
+    ${regions.map(r => `<th style="padding:6px 8px;font-size:10px;color:var(--textmuted);
+      font-family:'JetBrains Mono',monospace;border-bottom:1px solid var(--border);
+      text-align:center;white-space:nowrap;">${r.replace('TamilNadu', 'T.Nadu')}</th>`).join('')}
+  </tr>`;
+
+            const rows = weeds.map(w => {
+                const vals = regions.map(r => WEED_AREA_MATRIX[w][r] || 0);
+                const cells = regions.map(r => {
+                    const v = WEED_AREA_MATRIX[w][r] || 0;
+                    const opacity = (v / 100 * 0.85 + 0.05).toFixed(2);
+                    const textColor = v > 50 ? '#0b1a10' : COLORS.textdim;
+                    const bg = v > 70 ? `rgba(106,191,123,${opacity})` : v > 40 ? `rgba(232,184,75,${opacity})` :
+                        v > 15 ? `rgba(141,196,154,${opacity})` : `rgba(30,61,39,0.3)`;
+                    return `<td style="padding:5px 8px;text-align:center;font-size:11px;
+                         background:${bg};color:${textColor};
+                         font-family:'JetBrains Mono',monospace;cursor:pointer;"
+                onclick="selectArea('${r.replace('TamilNadu', 'Tamil Nadu').replace('AP', 'Andhra Pradesh')}')"
+                title="${w} in ${r}: ${v}%">
+                ${v > 0 ? v : '—'}
+              </td>`;
+                }).join('');
+                return `<tr>
+      <td style="padding:6px 10px;font-size:11px;color:var(--textdim);
+                 border-bottom:1px solid var(--border)22;white-space:nowrap;">${w}</td>
+      ${cells}
+    </tr>`;
+            }).join('');
+
+            table.innerHTML = header + rows;
+        }
+
+        /* ══════════════════════════════════════
+           FIELD SURVEY
+        ══════════════════════════════════════ */
+        function surveyTab(tab, el) {
+            ['sv-active', 'sv-new', 'sv-history'].forEach(id => document.getElementById(id).style.display = 'none');
+            document.getElementById('sv-' + tab).style.display = 'block';
+            document.querySelectorAll('.tab-bar .tab').forEach(t => t.classList.remove('active'));
+            el.classList.add('active');
+        }
+
+        let weedRowCount = 0;
+        function addWeedRow() {
+            weedRowCount++;
+            const cont = document.getElementById('weedRowContainer');
+            if (weedRowCount === 1) cont.innerHTML = '';
+            const div = document.createElement('div');
+            div.className = 'survey-weed-row';
+            div.innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <div><label class="form-label">SPECIES</label>
+        <select class="inp" style="font-size:11px;">
+          ${WEEDS.map(w => `<option>${w.common}</option>`).join('')}
+        </select>
+      </div>
+      <div><label class="form-label">DENSITY</label>
+        <select class="inp" style="font-size:11px;">
+          <option>Low (&lt;10/m²)</option>
+          <option>Medium (10-50/m²)</option>
+          <option>High (&gt;50/m²)</option>
+        </select>
+      </div>
+    </div>`;
+            cont.appendChild(div);
+        }
+
+        function toggleIrr(btn) {
+            btn.classList.toggle('btn-primary');
+            btn.classList.toggle('btn-outline');
+        }
+
+        function buildChecklistAndHistory() {
+            const items = ['GPS coordinates captured', 'Min. 5 observations per field', 'Weed density recorded', 'Crop damage % estimated', 'Photo evidence attached'];
+            document.getElementById('checklist').innerHTML = items.map(i => `
+    <div class="stat-row">
+      <span class="stat-label">${i}</span>
+      <span style="color:var(--textmuted);font-size:16px;cursor:pointer;" onclick="this.textContent=this.textContent==='○'?'✓':'○';this.style.color=this.textContent==='✓'?'var(--accent)':'var(--textmuted)';">○</span>
+    </div>`).join('');
+
+            new Chart(document.getElementById('chartSurveyHistory'), {
+                type: 'bar',
+                data: {
+                    labels: GEO.map(g => g.region),
+                    datasets: [{ label: 'Surveys', data: GEO.map(g => g.surveys), backgroundColor: COLORS.accent, borderRadius: 4 }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { x: { grid: { display: false }, ticks: { font: { size: 10 } } }, y: { grid: { color: COLORS.border }, ticks: { font: { size: 10 } } } }
+                }
+            });
+        }
+
+        /* ══════════════════════════════════════
+           GTM BUILDER
+        ══════════════════════════════════════ */
+        function renderGTMCards() {
+            const grid = document.getElementById('gtmGrid');
+            grid.innerHTML = GTM_PLANS.map((g, i) => {
+                const stClass = g.stage === 'Active' ? 'badge-green' : g.stage === 'In Prep' ? 'badge-amber' : 'badge-muted';
+                const convColor = g.conv > 20 ? COLORS.accent : g.conv > 10 ? COLORS.amber : COLORS.textdim;
+                return `
+    <div class="gtm-card" id="gtm-${i}" onclick="toggleGTM(${i})">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <div>
+          <div class="gtm-region">📍 ${g.region}</div>
+          <div style="font-size:12px;color:var(--textdim);margin-top:4px;">Weed Pressure: <span style="color:var(--amber);">${g.pressure}</span></div>
+        </div>
+        <span class="badge ${stClass}">${g.stage}</span>
+      </div>
+      <hr class="div"/>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <div><div class="form-label">PRIMARY PRODUCT</div><div style="font-size:13px;color:var(--accent);">${g.primary}</div></div>
+        <div><div class="form-label">SECONDARY PRODUCT</div><div style="font-size:13px;color:var(--sage);">${g.secondary}</div></div>
+      </div>
+      <div style="margin-top:10px;"><div class="form-label">CHANNEL STRATEGY</div><div style="font-size:12px;color:var(--textdim);">${g.channel}</div></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:10px;">
+        <div style="font-size:11px;color:var(--textmuted);width:80px;">Conv. Rate</div>
+        <div class="progress-track"><div class="progress-fill" style="width:${g.conv}%;background:${convColor};"></div></div>
+        <div style="font-size:11px;color:var(--textdim);width:32px;text-align:right;font-family:'JetBrains Mono',monospace;">${g.conv}%</div>
+      </div>
+      <div class="gtm-expanded" id="gtmex-${i}">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
+          <div style="background:var(--surface);border-radius:8px;padding:10px;">
+            <div class="form-label">TARGET FARMERS</div>
+            <div style="font-size:18px;color:var(--text);font-family:'JetBrains Mono',monospace;">${g.farmers.toLocaleString()}</div>
+          </div>
+          <div style="background:var(--surface);border-radius:8px;padding:10px;">
+            <div class="form-label">TARGET REVENUE</div>
+            <div style="font-size:18px;color:var(--amber);font-family:'JetBrains Mono',monospace;">₹${g.revenue}L</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-primary" style="flex:1;">Execute GTM</button>
+          <button class="btn btn-outline">Edit Plan</button>
+        </div>
+      </div>
+    </div>`;
+            }).join('');
+        }
+
+        function toggleGTM(i) {
+            document.getElementById('gtm-' + i).classList.toggle('open');
+        }
+
+        /* ══════════════════════════════════════
+           GTM EXECUTION
+        ══════════════════════════════════════ */
+        function renderSalesFunnel() {
+            const steps = [
+                { label: 'GTM Plan Farmers', val: 7180, pct: 100, color: COLORS.border, tc: COLORS.textdim },
+                { label: 'Contacted', val: 5240, pct: 73, color: COLORS.green1, tc: '#0b1a10' },
+                { label: 'Trial Arranged', val: 3110, pct: 43, color: COLORS.green2, tc: '#0b1a10' },
+                { label: 'Trial Conducted', val: 1890, pct: 26, color: COLORS.accent, tc: '#0b1a10' },
+                { label: 'Order Placed', val: 940, pct: 13, color: COLORS.amber, tc: '#0b1a10' },
+            ];
+            document.getElementById('salesFunnel').innerHTML = steps.map(s => `
+    <div class="funnel-step">
+      <div class="funnel-lbl" style="width:150px;">${s.label}</div>
+      <div class="funnel-track">
+        <div class="funnel-fill" style="width:${s.pct}%;background:${s.color};">
+          <span style="color:${s.tc};">${s.val.toLocaleString()}</span>
+        </div>
+      </div>
+      <div class="funnel-pct">${s.pct}%</div>
+    </div>`).join('');
+        }
+
+        function buildExecPipelineChart() {
+            const regs = GTM_PLANS.map(g => g.region);
+            new Chart(document.getElementById('chartExecPipeline'), {
+                type: 'bar',
+                data: {
+                    labels: regs,
+                    datasets: [
+                        { label: 'Target Farmers', data: GTM_PLANS.map(g => g.farmers), backgroundColor: COLORS.border, borderRadius: 4 },
+                        { label: 'Demand Activated', data: GTM_PLANS.map(g => Math.floor(g.farmers * g.conv / 100)), backgroundColor: COLORS.amber, borderRadius: 4 },
+                        { label: 'Orders Placed', data: GTM_PLANS.map(g => Math.floor(g.farmers * g.conv / 100 * 0.6)), backgroundColor: COLORS.accent, borderRadius: 4 },
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { labels: { boxWidth: 10, font: { size: 10 } } } },
+                    scales: { x: { grid: { display: false }, ticks: { font: { size: 10 } } }, y: { grid: { color: COLORS.border }, ticks: { font: { size: 10 } } } }
+                }
+            });
+        }
+
+        /* ══════════════════════════════════════
+           CROP INTELLIGENCE
+        ══════════════════════════════════════ */
+        function buildRadarChart() {
+            new Chart(document.getElementById('chartRadar'), {
+                type: 'radar',
+                data: {
+                    labels: ['Nursery', 'Transplant', 'Tillering', 'Pan. Init.', 'Heading'],
+                    datasets: [
+                        { label: 'Grass', data: [40, 85, 90, 50, 20], borderColor: COLORS.accent, backgroundColor: '#6abf7b22', pointBackgroundColor: COLORS.accent },
+                        { label: 'Sedge', data: [20, 60, 80, 60, 30], borderColor: COLORS.amber, backgroundColor: '#e8b84b15', pointBackgroundColor: COLORS.amber },
+                        { label: 'Broadleaf', data: [30, 40, 55, 45, 35], borderColor: COLORS.sage, backgroundColor: '#8dc49a15', pointBackgroundColor: COLORS.sage },
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { r: { grid: { color: COLORS.border }, ticks: { display: false }, pointLabels: { font: { size: 10 }, color: COLORS.textdim } } }
+                }
+            });
+        }
+
+        /* ══════════════════════════════════════
+           ANALYTICS
+        ══════════════════════════════════════ */
+        function buildAnalyticsPage() {
+            // Prevalence horizontal bar
+            const sorted = [...WEEDS].sort((a, b) => b.prev - a.prev);
+            new Chart(document.getElementById('chartPrevalence'), {
+                type: 'bar',
+                data: {
+                    labels: sorted.map(w => w.common),
+                    datasets: [{ data: sorted.map(w => w.prev), backgroundColor: COLORS.accent, borderRadius: 4, label: 'Prevalence %' }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { x: { grid: { color: COLORS.border }, ticks: { font: { size: 10 } } }, y: { grid: { display: false }, ticks: { font: { size: 10 } } } }
+                }
+            });
+
+            // Resistance watch
+            document.getElementById('resistanceList').innerHTML = WEEDS.map(w => {
+                const rc = w.resist === 'High' ? 'badge-red' : w.resist === 'Medium' ? 'badge-amber' : 'badge-green';
+                return `<div class="stat-row">
+      <div>
+        <div style="font-size:12px;color:var(--textdim);">${w.common}</div>
+        <div style="font-size:10px;color:var(--textmuted);font-style:italic;">${w.name}</div>
+      </div>
+      <span class="badge ${rc}">${w.resist}</span>
+    </div>`;
+            }).join('');
+
+            // Alerts
+            const alerts = [
+                { c: COLORS.red, msg: "High resistance detected — Ischaemum rugosum in Kerala" },
+                { c: COLORS.amber, msg: "Survey gap — UP/Bihar region needs coverage" },
+                { c: COLORS.amber, msg: "Kharif window closing — Tamil Nadu GTM pending" },
+                { c: COLORS.blue, msg: "New species logged — Eleusine indica, Warangal" },
+                { c: COLORS.accent, msg: "GTM Telangana on track — 23% conversion" },
+            ];
+            document.getElementById('alertsList').innerHTML = alerts.map(a => `
+    <div style="display:flex;align-items:flex-start;gap:8px;padding:7px 0;border-bottom:1px solid #1e3d2722;">
+      <div class="alert-dot pulse" style="background:${a.c};margin-top:4px;"></div>
+      <span style="font-size:12px;color:var(--textdim);">${a.msg}</span>
+    </div>`).join('');
+
+            // Efficacy
+            const products = [
+                { name: "HerboPro Max", margin: 42 }, { name: "WeedOut Gold", margin: 38 },
+                { name: "SedgeClear", margin: 45 }, { name: "BroadShield", margin: 35 },
+                { name: "GrassKill Pro", margin: 48 }, { name: "TotalClear", margin: 41 },
+            ];
+            document.getElementById('efficacyList').innerHTML = products.map(p => {
+                const c = p.margin > 44 ? COLORS.accent : p.margin > 39 ? COLORS.amber : COLORS.textdim;
+                return `<div style="margin-bottom:10px;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:3px;">
+        <span style="font-size:11px;color:var(--textdim);">${p.name}</span>
+        <span style="font-size:11px;color:${c};font-family:'JetBrains Mono',monospace;">${p.margin}%</span>
+      </div>
+      <div class="pill-bar"><div class="pill-fill" style="width:${p.margin}%;background:${c};"></div></div>
+    </div>`;
+            }).join('');
+
+            // Maturity dims
+            const dims = [
+                { dim: "Repository Depth", score: 82, color: COLORS.accent },
+                { dim: "Geography Coverage", score: 64, color: COLORS.amber },
+                { dim: "GTM Quality", score: 71, color: COLORS.sage },
+                { dim: "Sales Conversion", score: 58, color: COLORS.blue },
+                { dim: "Resistance Tracking", score: 45, color: COLORS.red },
+            ];
+            document.getElementById('maturityDims').innerHTML = dims.map(d => `
+    <div style="margin-bottom:8px;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:3px;">
+        <span style="font-size:11px;color:var(--textdim);">${d.dim}</span>
+        <span style="font-size:11px;font-family:'JetBrains Mono',monospace;color:${d.color};">${d.score}</span>
+      </div>
+      <div class="pill-bar"><div class="pill-fill" style="width:${d.score}%;background:${d.color};"></div></div>
+    </div>`).join('');
+        }
+
+        /* ══════════════════════════════════════
+           INIT
+        ══════════════════════════════════════ */
+        // Mark all filter buttons
+        document.querySelectorAll('[onclick^="filterWeeds"]').forEach(b => b.classList.add('filter-btn'));
+    </script>
+</body>
+
+</html>

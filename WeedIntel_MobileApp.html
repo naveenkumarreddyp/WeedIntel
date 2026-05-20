@@ -1,0 +1,2531 @@
+<!-- WeedIntel_MobileApp.html -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <title>WeedIntel Field App</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet" />
+    <style>
+        :root {
+            --bg: #0b1a10;
+            --surface: #122118;
+            --card: #182e1f;
+            --border: #1e3d27;
+            --green1: #2d6a3f;
+            --green2: #3d8f55;
+            --accent: #6abf7b;
+            --amber: #e8b84b;
+            --sage: #8dc49a;
+            --text: #e8f5ec;
+            --textdim: #7aaa87;
+            --textmuted: #4a7558;
+            --red: #e05c5c;
+            --blue: #5ca8e0;
+            --purple: #9b7be0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            background: #1a1a2e;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            max-width: 430px;
+            margin: 0 auto;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* ── SHELL ── */
+        #app {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            max-height: 100vh;
+        }
+
+        #header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 14px 18px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+        }
+
+        .header-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 17px;
+            color: var(--accent);
+        }
+
+        .header-sub {
+            font-size: 10px;
+            color: var(--textmuted);
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: 1px;
+        }
+
+        .header-avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: var(--green1);
+            border: 2px solid var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        #pages {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .page {
+            display: none;
+            padding: 0;
+            animation: fadeIn .25s ease;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(6px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        /* ── BOTTOM NAV ── */
+        #bottomnav {
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: stretch;
+            flex-shrink: 0;
+            padding-bottom: env(safe-area-inset-bottom, 0);
+        }
+
+        .bnav {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 4px 6px;
+            cursor: pointer;
+            gap: 3px;
+            transition: all .15s;
+            border-top: 2px solid transparent;
+        }
+
+        .bnav.active {
+            border-top: 2px solid var(--accent);
+        }
+
+        .bnav-icon {
+            font-size: 19px;
+        }
+
+        .bnav-label {
+            font-size: 9px;
+            letter-spacing: .5px;
+            color: var(--textmuted);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .bnav.active .bnav-label {
+            color: var(--accent);
+        }
+
+        /* ── SECTION / CARDS ── */
+        .section {
+            padding: 16px;
+        }
+
+        .section-head {
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+            margin-bottom: 4px;
+        }
+
+        .section-sub {
+            font-size: 12px;
+            color: var(--textmuted);
+            margin-bottom: 16px;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 12px;
+        }
+
+        .card-title {
+            font-size: 10px;
+            letter-spacing: 1.8px;
+            text-transform: uppercase;
+            color: var(--textmuted);
+            font-family: 'JetBrains Mono', monospace;
+            margin-bottom: 10px;
+        }
+
+        /* ── BADGES ── */
+        .badge {
+            display: inline-block;
+            padding: 2px 9px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            white-space: nowrap;
+        }
+
+        .bg {
+            background: #6abf7b22;
+            color: var(--accent);
+            border: 1px solid #6abf7b44;
+        }
+
+        .ba {
+            background: #e8b84b22;
+            color: var(--amber);
+            border: 1px solid #e8b84b44;
+        }
+
+        .br {
+            background: #e05c5c22;
+            color: var(--red);
+            border: 1px solid #e05c5c44;
+        }
+
+        .bb {
+            background: #5ca8e022;
+            color: var(--blue);
+            border: 1px solid #5ca8e044;
+        }
+
+        .bm {
+            background: var(--border);
+            color: var(--textmuted);
+        }
+
+        .bp {
+            background: #9b7be022;
+            color: var(--purple);
+            border: 1px solid #9b7be044;
+        }
+
+        /* ── INPUTS ── */
+        .inp {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 11px 14px;
+            color: var(--text);
+            font-size: 14px;
+            font-family: 'Outfit', sans-serif;
+            outline: none;
+            width: 100%;
+            transition: border .15s;
+        }
+
+        .inp:focus {
+            border-color: var(--green2);
+        }
+
+        textarea.inp {
+            resize: none;
+        }
+
+        select.inp {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%234a7558' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+        }
+
+        .form-label {
+            font-size: 11px;
+            color: var(--textmuted);
+            margin-bottom: 5px;
+            display: block;
+            letter-spacing: .3px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        /* ── BUTTONS ── */
+        .btn {
+            padding: 12px 18px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: 'Outfit', sans-serif;
+            cursor: pointer;
+            border: none;
+            font-weight: 600;
+            transition: all .15s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: var(--bg);
+            width: 100%;
+        }
+
+        .btn-primary:active {
+            background: var(--sage);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--accent);
+            border: 1px solid #6abf7b55;
+            width: 100%;
+        }
+
+        .btn-red {
+            background: var(--red);
+            color: #fff;
+        }
+
+        .btn-sm {
+            padding: 7px 12px;
+            font-size: 12px;
+            border-radius: 8px;
+        }
+
+        /* ── STAT ROW ── */
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #1e3d2722;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--textdim);
+        }
+
+        .stat-val {
+            font-size: 13px;
+            color: var(--text);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* ── KPI ROW ── */
+        .kpi-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .kpi-mini {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 14px;
+        }
+
+        .kpi-mini-val {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            color: var(--text);
+            line-height: 1;
+        }
+
+        .kpi-mini-lbl {
+            font-size: 10px;
+            color: var(--textmuted);
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+
+        .kpi-mini-delta {
+            font-size: 11px;
+            color: var(--accent);
+            margin-top: 3px;
+        }
+
+        /* ── PILL BAR ── */
+        .pill-bar {
+            height: 4px;
+            border-radius: 2px;
+            background: var(--border);
+            overflow: hidden;
+            margin-top: 5px;
+        }
+
+        .pill-fill {
+            height: 100%;
+            border-radius: 2px;
+            background: var(--accent);
+        }
+
+        /* ── SURVEY STEPPER ── */
+        .step-bar {
+            display: flex;
+            gap: 4px;
+            padding: 14px 16px 0;
+        }
+
+        .step {
+            flex: 1;
+            height: 3px;
+            border-radius: 2px;
+            background: var(--border);
+            transition: background .3s;
+        }
+
+        .step.done {
+            background: var(--green1);
+        }
+
+        .step.active {
+            background: var(--accent);
+        }
+
+        /* ── WEED ID / CAMERA ── */
+        #cameraWrap {
+            position: relative;
+            width: 100%;
+            height: 260px;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        #cameraFeed {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        #cameraOverlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .scan-frame {
+            width: 200px;
+            height: 200px;
+            border: 2px solid var(--accent);
+            border-radius: 12px;
+            position: relative;
+            box-shadow: 0 0 0 2000px rgba(0, 0, 0, .45);
+        }
+
+        .scan-corner {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+        }
+
+        .sc-tl {
+            top: -2px;
+            left: -2px;
+            border-top: 3px solid var(--accent);
+            border-left: 3px solid var(--accent);
+            border-radius: 2px 0 0 0;
+        }
+
+        .sc-tr {
+            top: -2px;
+            right: -2px;
+            border-top: 3px solid var(--accent);
+            border-right: 3px solid var(--accent);
+            border-radius: 0 2px 0 0;
+        }
+
+        .sc-bl {
+            bottom: -2px;
+            left: -2px;
+            border-bottom: 3px solid var(--accent);
+            border-left: 3px solid var(--accent);
+            border-radius: 0 0 0 2px;
+        }
+
+        .sc-br {
+            bottom: -2px;
+            right: -2px;
+            border-bottom: 3px solid var(--accent);
+            border-right: 3px solid var(--accent);
+            border-radius: 0 0 2px 0;
+        }
+
+        .scan-line {
+            position: absolute;
+            top: 0;
+            left: 4px;
+            right: 4px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            animation: scanMove 2s linear infinite;
+        }
+
+        @keyframes scanMove {
+            0% {
+                top: 0
+            }
+
+            100% {
+                top: calc(100% - 2px)
+            }
+        }
+
+        .cam-btn-row {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            padding: 0 16px 16px;
+        }
+
+        .cam-btn {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .cam-shutter {
+            background: var(--accent);
+            color: var(--bg);
+            width: 64px;
+            height: 64px;
+        }
+
+        .cam-secondary {
+            background: var(--surface);
+            color: var(--textdim);
+            border: 1px solid var(--border);
+        }
+
+        #cvResults {
+            display: none;
+        }
+
+        .cv-result-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .cv-img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+
+        .cv-body {
+            padding: 12px;
+        }
+
+        .cv-confidence {
+            height: 4px;
+            border-radius: 2px;
+            background: var(--border);
+            margin: 6px 0;
+        }
+
+        .cv-conf-fill {
+            height: 100%;
+            border-radius: 2px;
+            background: var(--accent);
+        }
+
+        /* ── FARMER CARDS ── */
+        .farmer-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all .2s;
+        }
+
+        .farmer-card:active {
+            border-color: var(--accent);
+        }
+
+        .farmer-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: var(--green1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+            border: 2px solid var(--border);
+        }
+
+        .farmer-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .farmer-sub {
+            font-size: 11px;
+            color: var(--textmuted);
+            margin-top: 1px;
+        }
+
+        .farmer-detail {
+            display: none;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+        }
+
+        .farmer-card.open .farmer-detail {
+            display: block;
+        }
+
+        /* ── ACTIVITY CARD ── */
+        .act-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 10px;
+        }
+
+        .act-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        .act-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .act-sub {
+            font-size: 11px;
+            color: var(--textmuted);
+            margin-top: 2px;
+        }
+
+        .act-progress {
+            margin-top: 8px;
+        }
+
+        .act-prog-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 5px;
+        }
+
+        .act-prog-track {
+            flex: 1;
+            height: 5px;
+            background: var(--border);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .act-prog-fill {
+            height: 100%;
+            border-radius: 3px;
+        }
+
+        /* ── TABS ── */
+        .tab-bar-scroll {
+            display: flex;
+            gap: 6px;
+            padding: 4px 16px 14px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .tab-bar-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab-pill {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            color: var(--textdim);
+            background: var(--surface);
+            border: 1px solid var(--border);
+            white-space: nowrap;
+            transition: all .15s;
+            flex-shrink: 0;
+        }
+
+        .tab-pill.active {
+            background: var(--accent);
+            color: var(--bg);
+            border-color: var(--accent);
+        }
+
+        /* ── FLOATING ACTION BUTTON ── */
+        .fab {
+            position: fixed;
+            right: 20px;
+            bottom: 80px;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: var(--accent);
+            border: none;
+            color: var(--bg);
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 20px #6abf7b44;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all .2s;
+        }
+
+        .fab:active {
+            transform: scale(.94);
+        }
+
+        /* ── MODAL ── */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: #00000088;
+            z-index: 200;
+            align-items: flex-end;
+        }
+
+        .modal-overlay.open {
+            display: flex;
+        }
+
+        .modal-sheet {
+            background: var(--surface);
+            border-radius: 20px 20px 0 0;
+            border-top: 1px solid var(--border);
+            padding: 20px;
+            width: 100%;
+            max-height: 85vh;
+            overflow-y: auto;
+            animation: slideUp .25s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%)
+            }
+
+            to {
+                transform: translateY(0)
+            }
+        }
+
+        .modal-handle {
+            width: 40px;
+            height: 3px;
+            background: var(--border);
+            border-radius: 2px;
+            margin: 0 auto 18px;
+        }
+
+        .modal-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+            margin-bottom: 16px;
+        }
+
+        /* ── SURVEY STEPS ── */
+        #surveyContainer .step-page {
+            display: none;
+        }
+
+        #surveyContainer .step-page.active {
+            display: block;
+        }
+
+        /* ── CHIP ── */
+        .chip {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            margin: 2px;
+            background: #9b7be022;
+            color: var(--purple);
+            border: 1px solid #9b7be033;
+        }
+
+        /* ── NOTIFICATIONS ── */
+        .notif {
+            position: fixed;
+            top: 14px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--green1);
+            color: var(--text);
+            padding: 10px 18px;
+            border-radius: 10px;
+            font-size: 13px;
+            z-index: 300;
+            display: none;
+            box-shadow: 0 4px 20px #0008;
+            border: 1px solid var(--accent);
+        }
+
+        .notif.show {
+            display: block;
+            animation: fadeIn .3s ease;
+        }
+
+        /* ── ICONS FONT FALLBACKS ── */
+        .icon {
+            font-style: normal;
+        }
+
+        /* ── DIVIDER ── */
+        hr.div {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 12px 0;
+        }
+
+        /* ── WEED PICKER ── */
+        .wp-card {
+            background: var(--card);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all .18s;
+            position: relative;
+        }
+
+        .wp-card:active {
+            transform: scale(.97);
+        }
+
+        .wp-card.selected {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px #6abf7b33;
+        }
+
+        .wp-card-img {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+            display: block;
+            background: var(--surface);
+        }
+
+        .wp-card-body {
+            padding: 8px 9px;
+        }
+
+        .wp-card-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text);
+            line-height: 1.3;
+        }
+
+        .wp-card-sci {
+            font-size: 9px;
+            color: var(--textmuted);
+            font-style: italic;
+            margin-top: 1px;
+        }
+
+        .wp-check {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: var(--bg);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .wp-card.selected .wp-check {
+            display: flex;
+        }
+
+        /* ── SUGGESTED WEED CHIP ── */
+        .sw-chip {
+            flex-shrink: 0;
+            width: 100px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all .18s;
+        }
+
+        .sw-chip:active {
+            opacity: .8;
+        }
+
+        .sw-chip.selected {
+            border-color: var(--accent);
+        }
+
+        .sw-chip-img {
+            width: 100%;
+            height: 64px;
+            object-fit: cover;
+            background: var(--surface);
+        }
+
+        .sw-chip-name {
+            font-size: 10px;
+            color: var(--textdim);
+            padding: 4px 6px;
+            line-height: 1.3;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="notif" class="notif">✓ Saved successfully</div>
+
+    <div id="app">
+        <!-- HEADER -->
+        <div id="header">
+            <div>
+                <div class="header-logo">WeedIntel™</div>
+                <div class="header-sub">FIELD AGENT APP · v2.4</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;">
+                <span class="badge bg" style="font-size:9px;">● ONLINE</span>
+                <div class="header-avatar">👤</div>
+            </div>
+        </div>
+
+        <!-- PAGES -->
+        <div id="pages">
+
+            <!-- ═══ HOME ═══ -->
+            <div class="page active" id="pg-home">
+                <!-- Agent banner -->
+                <div
+                    style="background:linear-gradient(135deg,var(--green1),#1e3d27);padding:18px 16px 16px;margin-bottom:0;">
+                    <div style="font-size:12px;color:var(--sage);margin-bottom:2px;">Good Morning,</div>
+                    <div style="font-family:'Playfair Display',serif;font-size:20px;color:var(--text);">Ravi Kumar</div>
+                    <div style="font-size:11px;color:var(--textdim);margin-top:3px;">Telangana · Nalgonda Block · Agent
+                        ID: AG-0042</div>
+                    <div style="display:flex;gap:8px;margin-top:12px;">
+                        <span class="badge bg">🌾 Paddy</span>
+                        <span class="badge ba">Kharif 2024</span>
+                        <span class="badge bb">28 Surveys</span>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <!-- Today's tasks -->
+                    <div class="card-title">TODAY'S TASKS</div>
+                    <div class="card" style="padding:0;overflow:hidden;margin-bottom:14px;">
+                        <div id="taskList"></div>
+                    </div>
+
+                    <!-- KPIs -->
+                    <div class="kpi-row">
+                        <div class="kpi-mini">
+                            <div class="kpi-mini-lbl">Surveys Done</div>
+                            <div class="kpi-mini-val" style="color:var(--accent)">28</div>
+                            <div class="kpi-mini-delta">↑ +5 this week</div>
+                        </div>
+                        <div class="kpi-mini">
+                            <div class="kpi-mini-lbl">Farmers Met</div>
+                            <div class="kpi-mini-val" style="color:var(--amber)">142</div>
+                            <div class="kpi-mini-delta">↑ +18 this week</div>
+                        </div>
+                        <div class="kpi-mini">
+                            <div class="kpi-mini-lbl">Weeds Logged</div>
+                            <div class="kpi-mini-val" style="color:var(--sage)">84</div>
+                            <div class="kpi-mini-delta">12 species</div>
+                        </div>
+                        <div class="kpi-mini">
+                            <div class="kpi-mini-lbl">Demand Acts</div>
+                            <div class="kpi-mini-val" style="color:var(--blue)">9</div>
+                            <div class="kpi-mini-delta">3 converted</div>
+                        </div>
+                    </div>
+
+                    <!-- Quick actions -->
+                    <div class="card-title" style="margin-top:4px;">QUICK ACTIONS</div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+                        <button class="btn btn-primary btn-sm" onclick="goPage('survey')"
+                            style="border-radius:10px;padding:14px;">
+                            📋 New Survey
+                        </button>
+                        <button class="btn btn-outline btn-sm" onclick="goPage('weedid')"
+                            style="border-radius:10px;padding:14px;">
+                            🔬 ID Weed
+                        </button>
+                        <button class="btn btn-outline btn-sm" onclick="goPage('gtm')"
+                            style="border-radius:10px;padding:14px;">
+                            🚀 GTM Activity
+                        </button>
+                        <button class="btn btn-outline btn-sm" onclick="goPage('farmers')"
+                            style="border-radius:10px;padding:14px;">
+                            👥 Farmers
+                        </button>
+                    </div>
+
+                    <!-- Recent activity feed -->
+                    <div class="card-title">RECENT ACTIVITY</div>
+                    <div id="activityFeed"></div>
+                </div>
+            </div><!-- /home -->
+
+            <!-- ═══ SURVEY ═══ -->
+            <div class="page" id="pg-survey">
+                <!-- Step bar -->
+                <div class="step-bar" id="surveyStepBar">
+                    <div class="step active" id="sb0"></div>
+                    <div class="step" id="sb1"></div>
+                    <div class="step" id="sb2"></div>
+                    <div class="step" id="sb3"></div>
+                    <div class="step" id="sb4"></div>
+                </div>
+                <div style="padding:8px 16px 2px;font-size:10px;color:var(--textmuted);font-family:'JetBrains Mono',monospace;"
+                    id="surveyStepLabel">STEP 1 OF 5 · FARMER & LOCATION</div>
+
+                <div class="section" style="padding-top:10px;" id="surveyContainer">
+
+                    <!-- Step 1: Farmer & Location -->
+                    <div class="step-page active" id="sp0">
+                        <div class="section-head">Farmer Details</div>
+                        <div class="section-sub">Capture farmer & field location</div>
+                        <div class="form-group">
+                            <label class="form-label">FARMER NAME *</label>
+                            <input class="inp" id="sv_farmerName" placeholder="Full name" />
+                        </div>
+                        <div class="form-row">
+                            <div>
+                                <label class="form-label">MOBILE *</label>
+                                <input class="inp" id="sv_mobile" placeholder="10-digit" type="tel" />
+                            </div>
+                            <div>
+                                <label class="form-label">LAND HOLDING</label>
+                                <input class="inp" id="sv_land" placeholder="Acres" />
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div>
+                                <label class="form-label">STATE</label>
+                                <select class="inp" id="sv_state">
+                                    <option>Telangana</option>
+                                    <option>AP</option>
+                                    <option>Karnataka</option>
+                                    <option>Tamil Nadu</option>
+                                    <option>Kerala</option>
+                                    <option>Maharashtra</option>
+                                    <option>UP</option>
+                                    <option>Punjab</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="form-label">DISTRICT</label>
+                                <input class="inp" id="sv_district" placeholder="District" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">VILLAGE / BLOCK</label>
+                            <input class="inp" id="sv_village" placeholder="Village name" />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">GPS COORDINATES</label>
+                            <div style="display:flex;gap:8px;">
+                                <input class="inp" id="sv_gps" placeholder="Tap to capture" readonly
+                                    style="flex:1;font-family:'JetBrains Mono',monospace;font-size:12px;" />
+                                <button class="btn btn-outline btn-sm" style="white-space:nowrap;width:auto;"
+                                    onclick="captureGPS()">📍 Capture</button>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" onclick="surveyNext()">Continue →</button>
+                    </div>
+
+                    <!-- Step 2: Crop Info -->
+                    <div class="step-page" id="sp1">
+                        <div class="section-head">Crop Information</div>
+                        <div class="section-sub">Current field & crop status</div>
+                        <div class="form-group">
+                            <label class="form-label">CROP</label>
+                            <select class="inp">
+                                <option>🌾 Paddy (Transplanted)</option>
+                                <option>🌾 Paddy (Direct Seeded)</option>
+                                <option>🌽 Maize</option>
+                                <option>🌻 Soybean</option>
+                                <option>🧵 Cotton</option>
+                                <option>🌾 Wheat</option>
+                                <option>🌿 Sugarcane</option>
+                            </select>
+                        </div>
+                        <div class="form-row">
+                            <div>
+                                <label class="form-label">SEASON</label>
+                                <select class="inp">
+                                    <option>Kharif 2024</option>
+                                    <option>Rabi 2024</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="form-label">FIELD AREA (AC)</label>
+                                <input class="inp" type="number" placeholder="0.0"
+                                    style="font-family:'JetBrains Mono',monospace;" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">CROP GROWTH STAGE</label>
+                            <div id="stageSelector" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">DAYS AFTER TRANSPLANTING (DAT)</label>
+                            <input class="inp" type="number" placeholder="e.g. 14"
+                                style="font-family:'JetBrains Mono',monospace;" />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">IRRIGATION TYPE</label>
+                            <div id="irrSelector" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">SOWING DATE</label>
+                            <div class="form-row">
+                                <div>
+                                    <label class="form-label" style="font-size:9px;margin-bottom:4px;">DAY RANGE</label>
+                                    <select class="inp">
+                                        <option>1 - 10</option>
+                                        <option>11 - 20</option>
+                                        <option>21 - 30</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="form-label" style="font-size:9px;margin-bottom:4px;">MONTH</label>
+                                    <select class="inp">
+                                        <option>June</option>
+                                        <option>July</option>
+                                        <option>August</option>
+                                        <option>September</option>
+                                        <option>October</option>
+                                        <option>November</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="display:flex;gap:8px;">
+                            <button class="btn btn-outline" style="flex:0 0 auto;width:80px;" onclick="surveyBack()">←
+                                Back</button>
+                            <button class="btn btn-primary" onclick="surveyNext()">Continue →</button>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Weed Observation — Visual Picker -->
+                    <div class="step-page" id="sp2">
+                        <div class="section-head">Weed Observations</div>
+                        <div class="section-sub">Select weeds found in the field from the repository</div>
+
+                        <!-- Selected weeds summary bar -->
+                        <div id="weedObsContainer">
+                            <div
+                                style="text-align:center;padding:16px;color:var(--textmuted);font-size:12px;
+                        border:1px dashed var(--border);border-radius:10px;margin-bottom:10px;background:var(--surface);">
+                                <span style="font-size:22px;">🌿</span><br />No weeds selected yet
+                            </div>
+                        </div>
+
+                        <!-- Area-specific suggestions banner -->
+                        <div style="background:#6abf7b11;border:1px solid #6abf7b33;border-radius:10px;
+                      padding:10px 12px;margin-bottom:12px;display:flex;align-items:center;gap:8px;">
+                            <span style="font-size:16px;">📍</span>
+                            <div>
+                                <div
+                                    style="font-size:10px;color:var(--accent);font-family:'JetBrains Mono',monospace;letter-spacing:1px;">
+                                    AREA INTELLIGENCE · TELANGANA</div>
+                                <div style="font-size:11px;color:var(--textdim);margin-top:1px;">Tap suggested weeds
+                                    below — pre-loaded from your territory data</div>
+                            </div>
+                        </div>
+
+                        <!-- Suggested for area -->
+                        <div class="card-title" style="margin-bottom:8px;">⚡ COMMONLY REPORTED IN YOUR AREA</div>
+                        <div id="weedSuggestedRow"
+                            style="display:flex;gap:8px;overflow-x:auto;padding-bottom:10px;scrollbar-width:none;margin-bottom:14px;">
+                        </div>
+
+                        <!-- Filter chips -->
+                        <div style="display:flex;gap:6px;margin-bottom:10px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px;"
+                            id="weedPickerFilter">
+                            <span class="wpf-chip active" onclick="filterWeedPicker('All',this)"
+                                style="padding:4px 12px;border-radius:20px;font-size:11px;cursor:pointer;
+                     white-space:nowrap;background:var(--accent);color:var(--bg);border:1px solid var(--accent);">All</span>
+                            <span class="wpf-chip" onclick="filterWeedPicker('Grass',this)"
+                                style="padding:4px 12px;border-radius:20px;font-size:11px;cursor:pointer;
+                     white-space:nowrap;background:var(--surface);color:var(--textdim);border:1px solid var(--border);">🌾 Grass</span>
+                            <span class="wpf-chip" onclick="filterWeedPicker('Sedge',this)"
+                                style="padding:4px 12px;border-radius:20px;font-size:11px;cursor:pointer;
+                     white-space:nowrap;background:var(--surface);color:var(--textdim);border:1px solid var(--border);">🌿 Sedge</span>
+                            <span class="wpf-chip" onclick="filterWeedPicker('Broadleaf',this)"
+                                style="padding:4px 12px;border-radius:20px;font-size:11px;cursor:pointer;
+                     white-space:nowrap;background:var(--surface);color:var(--textdim);border:1px solid var(--border);">🍃 Broadleaf</span>
+                        </div>
+
+                        <!-- Repository weed grid -->
+                        <div class="card-title" style="margin-bottom:8px;">📚 FULL WEED REPOSITORY (PRE-LOADED)</div>
+                        <div id="weedPickerGrid"
+                            style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;"></div>
+
+                        <!-- Infestation + damage -->
+                        <div
+                            style="background:var(--surface);border-radius:10px;padding:12px;border:1px solid var(--border);margin-bottom:14px;">
+                            <div class="form-group" style="margin-bottom:10px;">
+                                <label class="form-label">OVERALL INFESTATION LEVEL</label>
+                                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;"
+                                    id="infestSelector"></div>
+                            </div>
+                            <div class="form-group" style="margin-bottom:0;">
+                                <label class="form-label">ESTIMATED CROP DAMAGE %</label>
+                                <input class="inp" type="number" placeholder="0–100"
+                                    style="font-family:'JetBrains Mono',monospace;" />
+                            </div>
+                        </div>
+
+                        <div style="display:flex;gap:8px;">
+                            <button class="btn btn-outline" style="flex:0 0 auto;width:80px;" onclick="surveyBack()">←
+                                Back</button>
+                            <button class="btn btn-primary" onclick="surveyNext()">Continue →</button>
+                        </div>
+                    </div>
+
+                    <!-- Step 4: Photo Evidence -->
+                    <div class="step-page" id="sp3">
+                        <div class="section-head">Photo Evidence</div>
+                        <div class="section-sub">Capture field & weed photos</div>
+                        <div id="photoGrid"
+                            style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;"></div>
+                        <button class="btn btn-outline" onclick="addPhoto()" style="margin-bottom:16px;">📷 Capture
+                            Photo</button>
+                        <div class="form-group">
+                            <label class="form-label">FIELD NOTES / OBSERVATIONS</label>
+                            <textarea class="inp" rows="4"
+                                placeholder="Describe what you see in the field — soil type, standing water, unusual patterns..."></textarea>
+                        </div>
+                        <div style="display:flex;gap:8px;">
+                            <button class="btn btn-outline" style="flex:0 0 auto;width:80px;" onclick="surveyBack()">←
+                                Back</button>
+                            <button class="btn btn-primary" onclick="surveyNext()">Continue →</button>
+                        </div>
+                    </div>
+
+                    <!-- Step 5: Herbicide Recommendation -->
+                    <div class="step-page" id="sp4">
+                        <div class="section-head">Recommendation</div>
+                        <div class="section-sub">AI-generated product recommendation</div>
+                        <div style="background:var(--green1)22;border:1px solid var(--green1);border-radius:12px;
+                      padding:14px;margin-bottom:14px;">
+                            <div
+                                style="font-size:10px;color:var(--textmuted);font-family:'JetBrains Mono',monospace;margin-bottom:6px;">
+                                🤖 AI RECOMMENDATION</div>
+                            <div style="font-size:15px;font-weight:600;color:var(--accent);margin-bottom:4px;">HerboPro
+                                Max</div>
+                            <div style="font-size:12px;color:var(--textdim);">Pretilachlor 50% EC · Pre-emergence</div>
+                            <div style="font-size:11px;color:var(--textmuted);margin-top:6px;">Based on: Barnyard Grass
+                                (High) + Globe Fimbry (Medium) at Tillering stage in Flooded field</div>
+                            <div style="margin-top:10px;display:flex;gap:8px;align-items:center;">
+                                <div style="flex:1;height:4px;background:var(--border);border-radius:2px;">
+                                    <div style="width:91%;height:100%;background:var(--accent);border-radius:2px;">
+                                    </div>
+                                </div>
+                                <span
+                                    style="font-size:11px;color:var(--accent);font-family:'JetBrains Mono',monospace;">91%
+                                    match</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">SECONDARY OPTION</label>
+                            <div
+                                style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;">
+                                <div style="font-size:14px;font-weight:600;color:var(--amber);">SedgeClear</div>
+                                <div style="font-size:11px;color:var(--textdim);">Pyrazosulfuron 10% WP · Post-emergence
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">FARMER CONSENT FOR FOLLOW-UP</label>
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;" id="consentSelector"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">PREFERRED CONTACT METHOD</label>
+                            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;" id="contactSelector">
+                            </div>
+                        </div>
+                        <div style="display:flex;gap:8px;">
+                            <button class="btn btn-outline" style="flex:0 0 auto;width:80px;" onclick="surveyBack()">←
+                                Back</button>
+                            <button class="btn btn-primary" onclick="submitSurvey()"
+                                style="background:var(--amber);color:var(--bg);">✓ Submit Survey</button>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- /survey -->
+
+            <!-- ═══ WEED ID ═══ -->
+            <div class="page" id="pg-weedid">
+                <div class="section">
+                    <div class="section-head">Weed Identifier</div>
+                    <div class="section-sub">Point camera at weed for AI identification</div>
+
+                    <!-- Camera UI -->
+                    <div id="cameraWrap">
+                        <div id="cameraOverlay">
+                            <div class="scan-frame">
+                                <div class="scan-corner sc-tl"></div>
+                                <div class="scan-corner sc-tr"></div>
+                                <div class="scan-corner sc-bl"></div>
+                                <div class="scan-corner sc-br"></div>
+                                <div class="scan-line"></div>
+                            </div>
+                        </div>
+                        <div style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);
+                      font-size:11px;color:rgba(255,255,255,.6);font-family:'JetBrains Mono',monospace;
+                      white-space:nowrap;" id="scanStatus">Align weed within frame</div>
+                    </div>
+
+                    <!-- Camera controls -->
+                    <div class="cam-btn-row">
+                        <button class="cam-btn cam-secondary" title="Gallery" onclick="loadGallery()">🖼️</button>
+                        <button class="cam-btn cam-shutter" onclick="captureAndIdentify()">⬤</button>
+                        <button class="cam-btn cam-secondary" title="Flash"
+                            onclick="this.style.color=this.style.color===COLORS?'var(--textdim)':'var(--amber)'">⚡</button>
+                    </div>
+
+                    <!-- Scanning hint -->
+                    <div style="text-align:center;padding:4px 0 14px;font-size:11px;color:var(--textmuted);">
+                        Tap ⬤ to identify · Works on leaf, stem, seed head
+                    </div>
+
+                    <!-- CV Results (shown after capture) -->
+                    <div id="cvResults">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                            <div style="font-size:13px;font-weight:600;color:var(--text);">Identification Results</div>
+                            <button onclick="resetCamera()"
+                                style="background:none;border:none;color:var(--textmuted);cursor:pointer;font-size:12px;">✕
+                                Reset</button>
+                        </div>
+                        <div id="cvResultList"></div>
+                        <div style="background:var(--surface);border:1px dashed var(--border);border-radius:10px;
+                      padding:12px;margin-top:8px;font-size:11px;color:var(--textmuted);">
+                            ⚠️ Always confirm identification visually. CV confidence &gt;85% recommended before logging.
+                        </div>
+                    </div>
+
+                    <!-- Search fallback -->
+                    <hr class="div" />
+                    <div class="form-group">
+                        <label class="form-label">OR SEARCH BY NAME</label>
+                        <input class="inp" id="weedSearchInp" placeholder="Type common or scientific name…"
+                            oninput="weedSearch(this.value)" />
+                    </div>
+                    <div id="weedSearchResults"></div>
+                </div>
+            </div><!-- /weedid -->
+
+            <!-- ═══ GTM ═══ -->
+            <div class="page" id="pg-gtm">
+                <div class="section">
+                    <div class="section-head">GTM Execution</div>
+                    <div class="section-sub">Demand generation activities for your territory</div>
+
+                    <!-- Territory KPIs -->
+                    <div class="kpi-row">
+                        <div class="kpi-mini">
+                            <div class="kpi-mini-lbl">My Territory</div>
+                            <div class="kpi-mini-val" style="color:var(--accent)">Telangana</div>
+                            <div class="kpi-mini-delta">Nalgonda Block</div>
+                        </div>
+                        <div class="kpi-mini">
+                            <div class="kpi-mini-lbl">Conversion</div>
+                            <div class="kpi-mini-val" style="color:var(--amber)">23%</div>
+                            <div class="kpi-mini-delta">↑ +4% this week</div>
+                        </div>
+                    </div>
+
+                    <!-- Tabs -->
+                    <div class="tab-bar-scroll" id="gtmTabs">
+                        <div class="tab-pill active" onclick="gtmTab('active',this)">🟢 Active (3)</div>
+                        <div class="tab-pill" onclick="gtmTab('planned',this)">📅 Planned (4)</div>
+                        <div class="tab-pill" onclick="gtmTab('completed',this)">✅ Completed (6)</div>
+                        <div class="tab-pill" onclick="gtmTab('create',this)">➕ New Activity</div>
+                    </div>
+
+                    <div id="gtm-active" class="gtm-pane">
+                        <div id="activityListContainer"></div>
+                    </div>
+
+                    <div id="gtm-planned" class="gtm-pane" style="display:none;">
+                        <div id="plannedListContainer"></div>
+                    </div>
+
+                    <div id="gtm-completed" class="gtm-pane" style="display:none;">
+                        <div id="completedListContainer"></div>
+                    </div>
+
+                    <div id="gtm-create" class="gtm-pane" style="display:none;">
+                        <div class="card-title">CREATE NEW ACTIVITY</div>
+                        <div class="form-group">
+                            <label class="form-label">ACTIVITY TYPE</label>
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;" id="actTypeSelector"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">ACTIVITY TITLE</label>
+                            <input class="inp" placeholder="e.g. Barnyard Grass Demo at Nalgonda" />
+                        </div>
+                        <div class="form-row">
+                            <div>
+                                <label class="form-label">DATE</label>
+                                <input class="inp" type="date" />
+                            </div>
+                            <div>
+                                <label class="form-label">EXPECTED FARMERS</label>
+                                <input class="inp" type="number" placeholder="0"
+                                    style="font-family:'JetBrains Mono',monospace;" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">PRIMARY PRODUCT TO DEMO</label>
+                            <select class="inp">
+                                <option>HerboPro Max</option>
+                                <option>WeedOut Gold</option>
+                                <option>SedgeClear</option>
+                                <option>BroadShield</option>
+                                <option>GrassKill Pro</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">LOCATION / VENUE</label>
+                            <input class="inp" placeholder="Village, block or dealer name" />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">TARGET WEED (from territory repo)</label>
+                            <select class="inp">
+                                <option>Barnyard Grass (Echinochloa)</option>
+                                <option>Variable Flatsedge</option>
+                                <option>Globe Fimbry</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary" onclick="createActivity()"
+                            style="background:var(--amber);color:var(--bg);">
+                            📅 Schedule Activity
+                        </button>
+                    </div>
+                </div>
+            </div><!-- /gtm -->
+
+            <!-- ═══ FARMERS ═══ -->
+            <div class="page" id="pg-farmers">
+                <div class="section">
+                    <div class="section-head">Farmer Repository</div>
+                    <div class="section-sub">All farmers in your territory</div>
+
+                    <!-- Search & Filter -->
+                    <div class="form-group">
+                        <input class="inp" placeholder="🔍  Search by name, village, phone…"
+                            oninput="filterFarmers(this.value)" id="farmerSearch" />
+                    </div>
+                    <div class="tab-bar-scroll" style="padding:0 0 12px;">
+                        <div class="tab-pill active" onclick="farmerFilter('all',this)">All (14)</div>
+                        <div class="tab-pill" onclick="farmerFilter('surveyed',this)">Surveyed</div>
+                        <div class="tab-pill" onclick="farmerFilter('demand',this)">In Demand Gen</div>
+                        <div class="tab-pill" onclick="farmerFilter('converted',this)">Converted</div>
+                        <div class="tab-pill" onclick="farmerFilter('followup',this)">Follow-up Due</div>
+                    </div>
+
+                    <!-- Farmer KPIs -->
+                    <div class="kpi-row" style="margin-bottom:14px;">
+                        <div class="kpi-mini">
+                            <div class="kpi-mini-lbl">Total Farmers</div>
+                            <div class="kpi-mini-val" style="color:var(--accent)">142</div>
+                            <div class="kpi-mini-delta">In territory</div>
+                        </div>
+                        <div class="kpi-mini">
+                            <div class="kpi-mini-lbl">Surveyed</div>
+                            <div class="kpi-mini-val" style="color:var(--amber)">98</div>
+                            <div class="kpi-mini-delta">69% coverage</div>
+                        </div>
+                        <div class="kpi-mini">
+                            <div class="kpi-mini-lbl">Demand Gen</div>
+                            <div class="kpi-mini-val" style="color:var(--sage)">54</div>
+                            <div class="kpi-mini-delta">Contacted</div>
+                        </div>
+                        <div class="kpi-mini">
+                            <div class="kpi-mini-lbl">Orders</div>
+                            <div class="kpi-mini-val" style="color:var(--blue)">18</div>
+                            <div class="kpi-mini-delta">33% conv.</div>
+                        </div>
+                    </div>
+
+                    <div id="farmerList"></div>
+                </div>
+            </div><!-- /farmers -->
+
+        </div><!-- /pages -->
+
+        <!-- BOTTOM NAV -->
+        <div id="bottomnav">
+            <div class="bnav active" id="bn-home" onclick="goPage('home')">
+                <span class="bnav-icon">⬡</span><span class="bnav-label">HOME</span>
+            </div>
+            <div class="bnav" id="bn-survey" onclick="goPage('survey')">
+                <span class="bnav-icon">📋</span><span class="bnav-label">SURVEY</span>
+            </div>
+            <div class="bnav" id="bn-weedid" onclick="goPage('weedid')">
+                <span class="bnav-icon">🔬</span><span class="bnav-label">WEED ID</span>
+            </div>
+            <div class="bnav" id="bn-gtm" onclick="goPage('gtm')">
+                <span class="bnav-icon">🚀</span><span class="bnav-label">GTM</span>
+            </div>
+            <div class="bnav" id="bn-farmers" onclick="goPage('farmers')">
+                <span class="bnav-icon">👥</span><span class="bnav-label">FARMERS</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══ ADD FARMER MODAL ══ -->
+    <div class="modal-overlay" id="addFarmerModal">
+        <div class="modal-sheet">
+            <div class="modal-handle"></div>
+            <div class="modal-title">Add New Farmer</div>
+            <div class="form-group"><label class="form-label">FULL NAME *</label><input class="inp"
+                    placeholder="Farmer name" /></div>
+            <div class="form-row">
+                <div><label class="form-label">MOBILE *</label><input class="inp" type="tel" placeholder="10-digit" />
+                </div>
+                <div><label class="form-label">AGE</label><input class="inp" type="number" placeholder="Age" /></div>
+            </div>
+            <div class="form-group"><label class="form-label">VILLAGE / BLOCK</label><input class="inp"
+                    placeholder="Village" /></div>
+            <div class="form-row">
+                <div><label class="form-label">LAND (ACRES)</label><input class="inp" type="number" placeholder="0.0" />
+                </div>
+                <div><label class="form-label">IRRIGATION</label><select class="inp">
+                        <option>Flooded</option>
+                        <option>Irrigated</option>
+                        <option>Rainfed</option>
+                    </select></div>
+            </div>
+            <button class="btn btn-primary" onclick="closeFarmerModal()"
+                style="margin-top:4px;background:var(--amber);color:var(--bg);">Save Farmer</button>
+            <button class="btn btn-outline" onclick="closeFarmerModal()" style="margin-top:8px;">Cancel</button>
+        </div>
+    </div>
+
+    <!-- ══ WEED DETAIL CAPTURE MODAL ══ -->
+    <div class="modal-overlay" id="weedObsModal">
+        <div class="modal-sheet">
+            <div class="modal-handle"></div>
+            <!-- Weed identity header with image -->
+            <div id="weedModalHeader" style="display:flex;gap:12px;align-items:center;margin-bottom:16px;">
+                <img id="weedModalImg" src="" alt=""
+                    style="width:72px;height:72px;border-radius:10px;object-fit:cover;background:var(--surface);border:1px solid var(--border);" />
+                <div>
+                    <div id="weedModalName"
+                        style="font-family:'Playfair Display',serif;font-size:16px;color:var(--text);"></div>
+                    <div id="weedModalSci"
+                        style="font-size:11px;color:var(--textmuted);font-style:italic;margin-top:2px;"></div>
+                    <div style="display:flex;gap:4px;margin-top:5px;">
+                        <span id="weedModalType" class="badge"></span>
+                        <span id="weedModalSev" class="badge"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Key info strip -->
+            <div id="weedModalInfo" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;
+                                    background:var(--bg);border-radius:10px;padding:10px;"></div>
+
+            <div class="modal-title" style="font-size:15px;margin-bottom:12px;">Record Field Observation</div>
+
+            <div class="form-row">
+                <div>
+                    <label class="form-label">DENSITY IN FIELD</label>
+                    <select class="inp" id="obsDensity">
+                        <option>Low (&lt;10/m²)</option>
+                        <option>Medium (10–50/m²)</option>
+                        <option>High (&gt;50/m²)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="form-label">FIELD COVERAGE %</label>
+                    <input class="inp" type="number" id="obsCoverage" placeholder="0–100"
+                        style="font-family:'JetBrains Mono',monospace;" />
+                </div>
+            </div>
+            <div class="form-group" style="margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                <input type="checkbox" id="easilyControlled" style="width:16px;height:16px;accent-color:var(--accent);">
+                <label for="easilyControlled" style="font-size:12px;color:var(--text);margin:0;font-weight:500;">Easily controlled weed</label>
+            </div>
+            <div class="form-group">
+                <label class="form-label">WEED GROWTH STAGE OBSERVED</label>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;" id="weedGrowthStages"></div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">DISTRIBUTION PATTERN</label>
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;" id="weedDistribution"></div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">WEED SEVERITY</label>
+                <select class="inp" id="weedSevDropdown">
+                    <option>High</option>
+                    <option>Medium</option>
+                    <option>Low</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">PRODUCT SELECTION (MULTI-SELECT)</label>
+                <select class="inp" id="productSelectDropdown" onchange="addProductFromDropdown()">
+                    <option value="">-- Select Product --</option>
+                    <option value="Pretilachlor">Pretilachlor</option>
+                    <option value="Bispyribac-Na">Bispyribac-Na</option>
+                    <option value="2,4-D">2,4-D</option>
+                    <option value="Pyrazosulfuron">Pyrazosulfuron</option>
+                    <option value="Atrazine">Atrazine</option>
+                    <option value="Tembotrione">Tembotrione</option>
+                    <option value="Halosulfuron">Halosulfuron</option>
+                </select>
+                <div id="selectedProductsList" style="margin-top:10px;display:flex;flex-direction:column;gap:8px;"></div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">PHOTO OF THIS WEED (OPTIONAL)</label>
+                <button class="btn btn-outline btn-sm" style="width:100%;"
+                    onclick="showNotif('📷 Camera opened for weed photo')">📷 Capture Photo</button>
+            </div>
+
+            <!-- Recommended herbicide reminder -->
+            <div
+                style="background:#e8b84b11;border:1px solid #e8b84b33;border-radius:8px;padding:10px;margin-bottom:14px;">
+                <div style="font-size:9px;color:var(--amber);font-family:'JetBrains Mono',monospace;margin-bottom:4px;">
+                    💊 RECOMMENDED CONTROL</div>
+                <div id="weedModalControl" style="font-size:12px;color:var(--textdim);"></div>
+            </div>
+
+            <button class="btn btn-primary" onclick="saveWeedObs()"
+                style="background:var(--accent);margin-bottom:8px;">✓ Add to Survey</button>
+            <button class="btn btn-outline" onclick="closeWeedModal()">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        /* ══════════════════════════════════════
+           DATA
+        ══════════════════════════════════════ */
+        const WEEDS_DB = [
+            {
+                id: "W001", sci: "Echinochloa crus-galli", common: "Barnyard Grass", type: "Grass", control: "Pretilachlor, Bispyribac-Na",
+                photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Echinochloa_crus-galli_kz01.jpg/320px-Echinochloa_crus-galli_kz01.jpg",
+                conf: 94, severity: "High", stages: ["Transplanting", "Tillering"], threshold: "5–10/m²"
+            },
+            {
+                id: "W002", sci: "Cyperus difformis", common: "Variable Flatsedge", type: "Sedge", control: "Pyrazosulfuron, Bensulfuron",
+                photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Cyperus_difformis_2.jpg/320px-Cyperus_difformis_2.jpg",
+                conf: 88, severity: "High", stages: ["Tillering"], threshold: "15–20/m²"
+            },
+            {
+                id: "W003", sci: "Monochoria vaginalis", common: "Pickerelweed", type: "Broadleaf", control: "2,4-D, Metsulfuron",
+                photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Monochoria_vaginalis_-_stem.jpg/320px-Monochoria_vaginalis_-_stem.jpg",
+                conf: 91, severity: "Medium", stages: ["Tillering", "PI"], threshold: "10/m²"
+            },
+            {
+                id: "W004", sci: "Ischaemum rugosum", common: "Murainagrass", type: "Grass", control: "Cyhalofop-butyl",
+                photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Ischaemum_rugosum_MS_3992.jpg/320px-Ischaemum_rugosum_MS_3992.jpg",
+                conf: 85, severity: "High", stages: ["Transplanting", "Tillering"], threshold: "3–5/m²"
+            },
+            {
+                id: "W005", sci: "Ludwigia octovalvis", common: "Water Primrose", type: "Broadleaf", control: "2,4-D Amine",
+                photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Ludwigia_octovalvis_flowers.jpg/320px-Ludwigia_octovalvis_flowers.jpg",
+                conf: 79, severity: "Medium", stages: ["PI", "Heading"], threshold: "2–4/m²"
+            },
+            {
+                id: "W006", sci: "Paspalum distichum", common: "Knotgrass", type: "Grass", control: "Pretilachlor, Oxadiazon",
+                photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Paspalum_distichum_JdP.jpg/320px-Paspalum_distichum_JdP.jpg",
+                conf: 90, severity: "High", stages: ["Transplanting", "Tillering"], threshold: "8–12/m²"
+            },
+            {
+                id: "W007", sci: "Fimbristylis miliacea", common: "Globe Fimbry", type: "Sedge", control: "Pyrazosulfuron",
+                photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Fimbristylis_miliacea_MS_3996.jpg/320px-Fimbristylis_miliacea_MS_3996.jpg",
+                conf: 82, severity: "Medium", stages: ["Tillering"], threshold: "20–30/m²"
+            },
+            {
+                id: "W008", sci: "Sphenoclea zeylanica", common: "Gooseweed", type: "Broadleaf", control: "Metsulfuron+Chlorimuron",
+                photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Sphenoclea_zeylanica_MS_3990.jpg/320px-Sphenoclea_zeylanica_MS_3990.jpg",
+                conf: 76, severity: "Medium", stages: ["Tillering", "PI"], threshold: "5–8/m²"
+            },
+        ];
+
+        const FARMERS_DB = [
+            { id: "F001", name: "Ramaiah Reddy", village: "Miryalaguda", mobile: "9848012345", land: 4.5, irr: "Flooded", surveys: 3, status: "Converted", weed: "Barnyard Grass", product: "HerboPro Max", lastContact: "2 days ago", emoji: "👨‍🌾" },
+            { id: "F002", name: "Laxmi Bai", village: "Nalgonda", mobile: "9848023456", land: 2.0, irr: "Flooded", surveys: 2, status: "In Demand Gen", weed: "Flatsedge", product: "SedgeClear", lastContact: "5 days ago", emoji: "👩‍🌾" },
+            { id: "F003", name: "Srinivas Rao", village: "Huzurnagar", mobile: "9848034567", land: 6.0, irr: "Irrigated", surveys: 4, status: "Follow-up Due", weed: "Murainagrass", product: "GrassKill Pro", lastContact: "12 days ago", emoji: "👨‍🌾" },
+            { id: "F004", name: "Padma Venkat", village: "Suryapet", mobile: "9848045678", land: 1.5, irr: "Rainfed", surveys: 1, status: "Surveyed", weed: "Gooseweed", product: "TotalClear", lastContact: "3 days ago", emoji: "👩‍🌾" },
+            { id: "F005", name: "Krishnamurthy", village: "Kodad", mobile: "9848056789", land: 8.0, irr: "Flooded", surveys: 5, status: "Converted", weed: "Barnyard Grass", product: "HerboPro Max", lastContact: "1 day ago", emoji: "👨‍🌾" },
+            { id: "F006", name: "Sunitha Devi", village: "Miryalaguda", mobile: "9848067890", land: 3.0, irr: "Flooded", surveys: 2, status: "In Demand Gen", weed: "Pickerelweed", product: "BroadShield", lastContact: "4 days ago", emoji: "👩‍🌾" },
+            { id: "F007", name: "Nagender Goud", village: "Nalgonda", mobile: "9848078901", land: 5.5, irr: "Irrigated", surveys: 3, status: "Follow-up Due", weed: "Knotgrass", product: "HerboPro Max", lastContact: "8 days ago", emoji: "👨‍🌾" },
+            { id: "F008", name: "Revathi Sharma", village: "Huzurnagar", mobile: "9848089012", land: 2.5, irr: "Flooded", surveys: 1, status: "Surveyed", weed: "Flatsedge", product: "SedgeClear", lastContact: "6 days ago", emoji: "👩‍🌾" },
+        ];
+
+        const ACTIVITIES_DB = {
+            active: [
+                { title: "Barnyard Grass Demo", type: "Demo", village: "Miryalaguda", date: "Apr 15", farmers: 24, attended: 18, product: "HerboPro Max", status: "Active", target: 5, converted: 3 },
+                { title: "Dealer Activation – Nalgonda", type: "Dealer", village: "Nalgonda Town", date: "Apr 16", farmers: 0, attended: 0, product: "HerboPro Max + SedgeClear", status: "Scheduled", target: 80, converted: 0 },
+                { title: "FPO Awareness Camp", type: "FPO", village: "Kodad Block", date: "Apr 17", farmers: 35, attended: 0, product: "WeedOut Gold", status: "Scheduled", target: 40, converted: 0 },
+            ],
+            planned: [
+                { title: "Farmer Field Day", type: "Demo", village: "Suryapet", date: "Apr 22", farmers: 50, attended: 0, product: "GrassKill Pro", status: "Planned", target: 50, converted: 0 },
+                { title: "Agri-Input Shop Branding", type: "Dealer", village: "Kodad", date: "Apr 23", farmers: 0, attended: 0, product: "HerboPro Max", status: "Planned", target: 20, converted: 0 },
+                { title: "WhatsApp Demand Campaign", type: "Digital", village: "All Villages", date: "Apr 25", farmers: 200, attended: 0, product: "All Products", status: "Planned", target: 200, converted: 0 },
+                { title: "Seed-cum-Herb Trial Plot", type: "Trial", village: "Miryalaguda", date: "Apr 28", farmers: 12, attended: 0, product: "WeedOut Gold", status: "Planned", target: 12, converted: 0 },
+            ],
+            completed: [
+                { title: "Season Kick-off Meeting", type: "FPO", village: "Nalgonda", date: "Mar 20", farmers: 42, attended: 38, product: "HerboPro Max", status: "Done", target: 40, converted: 14 },
+                { title: "Pre-season Weed Workshop", type: "Demo", village: "Miryalaguda", date: "Mar 28", farmers: 28, attended: 25, product: "SedgeClear", status: "Done", target: 25, converted: 9 },
+                { title: "Direct Farmer Calls", type: "Digital", village: "All", date: "Apr 2", farmers: 85, attended: 85, product: "All", status: "Done", target: 80, converted: 22 },
+                { title: "Dealer Meet – Q1", type: "Dealer", village: "Nalgonda", date: "Apr 5", farmers: 0, attended: 0, product: "All", status: "Done", target: 30, converted: 28 },
+                { title: "Agri-Kisan Mela", type: "Demo", village: "Suryapet", date: "Apr 7", farmers: 64, attended: 58, product: "WeedOut Gold", status: "Done", target: 60, converted: 18 },
+                { title: "TV Channel AD Boost", type: "Digital", village: "Telangana", date: "Apr 10", farmers: 500, attended: 500, product: "HerboPro Max", status: "Done", target: 500, converted: 34 },
+            ]
+        };
+
+        const COLORS = {
+            accent: "#6abf7b", amber: "#e8b84b", red: "#e05c5c", blue: "#5ca8e0",
+            textdim: "#7aaa87", textmuted: "#4a7558", surface: "#122118", border: "#1e3d27"
+        };
+
+        /* ══════════════════════════════════════
+           NAVIGATION
+        ══════════════════════════════════════ */
+        const PAGE_MAP = {
+            home: "pg-home", survey: "pg-survey", weedid: "pg-weedid",
+            gtm: "pg-gtm", farmers: "pg-farmers"
+        };
+        const initDone = {};
+
+        function goPage(id) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.bnav').forEach(b => b.classList.remove('active'));
+            document.getElementById(PAGE_MAP[id]).classList.add('active');
+            const bn = document.getElementById('bn-' + id);
+            if (bn) bn.classList.add('active');
+            if (!initDone[id]) { initDone[id] = true; initPage(id); }
+        }
+
+        function initPage(id) {
+            if (id === 'home') buildHome();
+            if (id === 'survey') buildSurvey();
+            if (id === 'weedid') buildWeedID();
+            if (id === 'gtm') buildGTM();
+            if (id === 'farmers') buildFarmers();
+        }
+
+        /* ══════════════════════════════════════
+           NOTIFICATION
+        ══════════════════════════════════════ */
+        function showNotif(msg = '✓ Saved') {
+            const n = document.getElementById('notif');
+            n.textContent = msg; n.classList.add('show');
+            setTimeout(() => n.classList.remove('show'), 2500);
+        }
+
+        /* ══════════════════════════════════════
+           HOME
+        ══════════════════════════════════════ */
+        function buildHome() {
+            const tasks = [
+                { icon: "📋", text: "Survey Ramaiah Reddy's field — Miryalaguda", done: true, badge: "Done", bc: "bg" },
+                { icon: "🔬", text: "Identify unusual weed at Kodad Block", done: false, badge: "Pending", bc: "ba" },
+                { icon: "📣", text: "Barnyard Grass Demo — Apr 15, 6 PM", done: false, badge: "Today", bc: "br" },
+                { icon: "👥", text: "Follow up: Srinivas Rao — trial result", done: false, badge: "Overdue", bc: "br" },
+                { icon: "💊", text: "Collect trial feedback — Nagender Goud", done: false, badge: "Pending", bc: "ba" },
+            ];
+            document.getElementById('taskList').innerHTML = tasks.map(t => `
+    <div style="display:flex;align-items:center;gap:10px;padding:11px 14px;
+                border-bottom:1px solid #1e3d2722;opacity:${t.done ? .5 : 1}">
+      <span style="font-size:18px;">${t.icon}</span>
+      <span style="flex:1;font-size:13px;color:${t.done ? 'var(--textmuted)' : 'var(--textdim)'};
+                  ${t.done ? 'text-decoration:line-through' : ''}">${t.text}</span>
+      <span class="badge ${t.bc}">${t.badge}</span>
+    </div>`).join('');
+
+            const feed = [
+                { icon: "✅", text: "Survey SV-2892 submitted — Huzurnagar", time: "10 min ago", c: "accent" },
+                { icon: "🔬", text: "Barnyard Grass identified — Conf 94%", time: "1 hr ago", c: "sage" },
+                { icon: "📣", text: "Demo activity created — Apr 15", time: "2 hrs ago", c: "amber" },
+                { icon: "👤", text: "New farmer added — Revathi Sharma", time: "Yesterday", c: "blue" },
+                { icon: "💊", text: "Order confirmed — Krishnamurthy (HerboPro Max)", time: "Yesterday", c: "accent" },
+            ];
+            document.getElementById('activityFeed').innerHTML = feed.map(f => `
+    <div style="display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid #1e3d2722;">
+      <div style="width:30px;height:30px;border-radius:50%;background:var(--surface);
+                  border:1px solid var(--border);display:flex;align-items:center;
+                  justify-content:center;font-size:14px;flex-shrink:0;">${f.icon}</div>
+      <div style="flex:1;">
+        <div style="font-size:12px;color:var(--textdim);">${f.text}</div>
+        <div style="font-size:10px;color:var(--textmuted);margin-top:2px;font-family:'JetBrains Mono',monospace;">${f.time}</div>
+      </div>
+    </div>`).join('');
+        }
+
+        /* ══════════════════════════════════════
+           SURVEY
+        ══════════════════════════════════════ */
+        let surveyStep = 0;
+        const SURVEY_STEPS = ['FARMER & LOCATION', 'CROP INFORMATION', 'WEED OBSERVATIONS', 'PHOTO EVIDENCE', 'RECOMMENDATION & CONSENT'];
+        let weedObsList = [];
+        let photoCount = 0;
+        let activeWeedForModal = null;
+
+        // Area-weed mapping (pre-loaded from repository upload)
+        const AREA_WEEDS = {
+            'Telangana': ['W001', 'W002', 'W007'],
+            'AP': ['W001', 'W003', 'W007'],
+            'Karnataka': ['W001', 'W004'],
+            'Tamil Nadu': ['W002', 'W005'],
+            'Kerala': ['W004', 'W005'],
+            'Maharashtra': ['W001', 'W006'],
+            'UP': ['W006', 'W008'],
+            'Punjab': ['W006'],
+        };
+
+        function buildSurvey() {
+            // Stage selector
+            const stages = ['Nursery (0–7 DAT)', 'Transplanting (8–14 DAT)', 'Tillering (15–40 DAT)', 'Panicle Init. (41–65 DAT)'];
+            document.getElementById('stageSelector').innerHTML = stages.map(s => `
+    <button onclick="toggleSel(this,'stageSelector')" class="sel-btn"
+      style="padding:9px 8px;background:var(--surface);border:1px solid var(--border);
+             border-radius:8px;color:var(--textdim);font-size:11px;cursor:pointer;
+             text-align:left;transition:all .15s;">${s}</button>`).join('');
+
+            // Irrigation
+            ['Flooded', 'Irrigated', 'Rainfed'].forEach(s => {
+                const b = document.createElement('button');
+                b.className = 'sel-btn'; b.textContent = s;
+                b.style.cssText = 'padding:9px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--textdim);font-size:12px;cursor:pointer;transition:all .15s;';
+                b.onclick = () => toggleSel(b, 'irrSelector');
+                document.getElementById('irrSelector').appendChild(b);
+            });
+
+            // Infestation
+            ['Low', 'Medium', 'High'].forEach(s => {
+                const c = s === 'High' ? COLORS.red : s === 'Medium' ? COLORS.amber : COLORS.accent;
+                const b = document.createElement('button');
+                b.className = 'sel-btn'; b.textContent = s;
+                b.style.cssText = `padding:9px;background:${c}22;border:1px solid ${c}44;border-radius:8px;color:${c};font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;`;
+                b.onclick = () => toggleSel(b, 'infestSelector');
+                document.getElementById('infestSelector').appendChild(b);
+            });
+
+            // Consent
+            ['Yes — Call', 'Yes — WhatsApp'].forEach(s => {
+                const b = document.createElement('button');
+                b.className = 'sel-btn'; b.textContent = s;
+                b.style.cssText = 'padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--textdim);font-size:12px;cursor:pointer;';
+                b.onclick = () => toggleSel(b, 'consentSelector');
+                document.getElementById('consentSelector').appendChild(b);
+            });
+
+            // Contact method
+            ['📞 Call', '💬 WhatsApp', '🏠 Visit'].forEach(s => {
+                const b = document.createElement('button');
+                b.className = 'sel-btn'; b.textContent = s;
+                b.style.cssText = 'padding:9px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--textdim);font-size:11px;cursor:pointer;';
+                b.onclick = () => toggleSel(b, 'contactSelector');
+                document.getElementById('contactSelector').appendChild(b);
+            });
+
+            // Build weed picker
+            renderSuggestedWeeds();
+            renderWeedPickerGrid('All');
+            renderPhotos();
+        }
+
+        /* ── WEED PICKER ── */
+        function renderSuggestedWeeds() {
+            const state = document.getElementById('sv_state')?.value || 'Telangana';
+            const suggestedIds = AREA_WEEDS[state] || AREA_WEEDS['Telangana'];
+            const suggested = WEEDS_DB.filter(w => suggestedIds.includes(w.id));
+            const row = document.getElementById('weedSuggestedRow');
+            row.innerHTML = suggested.map(w => {
+                const sel = weedObsList.some(o => o.id === w.id);
+                return `
+    <div class="sw-chip ${sel ? 'selected' : ''}" id="sc-${w.id}" onclick="openWeedModal('${w.id}')">
+      <img class="sw-chip-img" src="${w.photo}" alt="${w.common}"
+        onerror="this.style.background='var(--border)';this.style.fontSize='20px';this.textContent='🌿'"/>
+      <div class="sw-chip-name">${w.common}</div>
+      ${sel ? `<div style="text-align:center;padding:2px 0;background:var(--accent);font-size:10px;color:var(--bg);font-weight:600;">✓ Added</div>` : ''}
+    </div>`;
+            }).join('');
+        }
+
+        function renderWeedPickerGrid(type) {
+            const weeds = type === 'All' ? WEEDS_DB : WEEDS_DB.filter(w => w.type === type);
+            const grid = document.getElementById('weedPickerGrid');
+            const typeColor = { Grass: COLORS.accent, Sedge: COLORS.amber, Broadleaf: COLORS.sage };
+            grid.innerHTML = weeds.map(w => {
+                const sel = weedObsList.some(o => o.id === w.id);
+                const sevC = w.severity === 'High' ? COLORS.red : COLORS.amber;
+                return `
+    <div class="wp-card ${sel ? 'selected' : ''}" id="wp-${w.id}" onclick="openWeedModal('${w.id}')">
+      <div class="wp-check">✓</div>
+      <div style="position:relative;">
+        <img class="wp-card-img" src="${w.photo}" alt="${w.common}"
+          onerror="this.parentElement.style.background='var(--surface)';this.style.display='none';
+                   this.insertAdjacentHTML('afterend','<div style=\\'height:100px;display:flex;align-items:center;justify-content:center;font-size:32px;\\'>🌿</div>')"/>
+        <div style="position:absolute;bottom:0;left:0;right:0;
+                    background:linear-gradient(transparent,rgba(0,0,0,.7));
+                    padding:4px 6px;">
+          <span style="font-size:9px;padding:1px 6px;border-radius:10px;
+                       background:${typeColor[w.type] || COLORS.accent}33;
+                       color:${typeColor[w.type] || COLORS.accent};border:1px solid ${typeColor[w.type] || COLORS.accent}55;">
+            ${w.type}
+          </span>
+          <span style="font-size:9px;padding:1px 6px;border-radius:10px;margin-left:3px;
+                       background:${sevC}33;color:${sevC};border:1px solid ${sevC}55;">
+            ${w.severity}
+          </span>
+        </div>
+      </div>
+      <div class="wp-card-body">
+        <div class="wp-card-name">${w.common}</div>
+        <div class="wp-card-sci">${w.sci}</div>
+        <div style="margin-top:5px;height:3px;border-radius:2px;background:var(--border);">
+          <div style="height:100%;width:${w.conf}%;border-radius:2px;background:${typeColor[w.type] || COLORS.accent};opacity:.7;"></div>
+        </div>
+        <div style="font-size:9px;color:var(--textmuted);margin-top:2px;font-family:'JetBrains Mono',monospace;">
+          Prev. ${w.conf}% · Thresh ${w.threshold}
+        </div>
+      </div>
+    </div>`;
+            }).join('');
+        }
+
+        function filterWeedPicker(type, el) {
+            document.querySelectorAll('.wpf-chip').forEach(c => {
+                c.style.background = 'var(--surface)'; c.style.color = 'var(--textdim)';
+                c.style.borderColor = 'var(--border)';
+            });
+            el.style.background = 'var(--accent)'; el.style.color = 'var(--bg)';
+            el.style.borderColor = 'var(--accent)';
+            renderWeedPickerGrid(type);
+        }
+
+        function openWeedModal(weedId) {
+            const w = WEEDS_DB.find(x => x.id === weedId);
+            if (!w) return;
+            activeWeedForModal = w;
+
+            // Populate modal
+            document.getElementById('weedModalImg').src = w.photo;
+            document.getElementById('weedModalName').textContent = w.common;
+            document.getElementById('weedModalSci').textContent = w.sci;
+            const typeColor = { Grass: COLORS.accent, Sedge: COLORS.amber, Broadleaf: COLORS.sage };
+            const tc = typeColor[w.type] || COLORS.accent;
+            document.getElementById('weedModalType').textContent = w.type;
+            document.getElementById('weedModalType').style.cssText = `background:${tc}22;color:${tc};border:1px solid ${tc}44;`;
+            const sc = w.severity === 'High' ? COLORS.red : COLORS.amber;
+            document.getElementById('weedModalSev').textContent = w.severity + ' Severity';
+            document.getElementById('weedModalSev').style.cssText = `background:${sc}22;color:${sc};border:1px solid ${sc}44;`;
+            document.getElementById('weedModalControl').textContent = w.control;
+            document.getElementById('weedModalInfo').innerHTML = `
+    <div style="text-align:center;padding:8px;background:var(--card);border-radius:8px;">
+      <div style="font-size:9px;color:var(--textmuted);margin-bottom:2px;font-family:'JetBrains Mono',monospace;">PEAK STAGE</div>
+      <div style="font-size:11px;color:var(--text);">${w.stages[0]}</div>
+    </div>
+    <div style="text-align:center;padding:8px;background:var(--card);border-radius:8px;">
+      <div style="font-size:9px;color:var(--textmuted);margin-bottom:2px;font-family:'JetBrains Mono',monospace;">THRESHOLD</div>
+      <div style="font-size:11px;color:var(--amber);">${w.threshold}</div>
+    </div>`;
+
+            // Growth stage buttons
+            document.getElementById('weedGrowthStages').innerHTML =
+                ['Seedling', 'Vegetative (3–5 leaf)', 'Tillering', 'Flowering', 'Seed set'].map(s => `
+      <button class="sel-btn" onclick="toggleSel(this,'weedGrowthStages')"
+        style="padding:8px;background:var(--surface);border:1px solid var(--border);
+               border-radius:8px;color:var(--textdim);font-size:11px;cursor:pointer;">${s}</button>`).join('');
+
+            // Distribution buttons
+            document.getElementById('weedDistribution').innerHTML =
+                ['Scattered', 'Patches', 'Uniform'].map(s => `
+      <button class="sel-btn" onclick="toggleSel(this,'weedDistribution')"
+        style="padding:8px;background:var(--surface);border:1px solid var(--border);
+               border-radius:8px;color:var(--textdim);font-size:11px;cursor:pointer;">${s}</button>`).join('');
+
+            // Reset new fields
+            document.getElementById('easilyControlled').checked = false;
+            document.getElementById('weedSevDropdown').value = 'High';
+            document.getElementById('productSelectDropdown').value = '';
+            document.getElementById('selectedProductsList').innerHTML = '';
+            selectedProductsForWeed = {};
+
+            document.getElementById('weedObsModal').classList.add('open');
+        }
+
+        let selectedProductsForWeed = {};
+
+        function addProductFromDropdown() {
+            const dropdown = document.getElementById('productSelectDropdown');
+            const prod = dropdown.value;
+            if (!prod) return;
+            if (selectedProductsForWeed[prod]) {
+                dropdown.value = '';
+                return;
+            }
+            selectedProductsForWeed[prod] = ''; // dosage initially empty
+            dropdown.value = '';
+            renderSelectedProducts();
+        }
+
+        function removeProduct(prod) {
+            delete selectedProductsForWeed[prod];
+            renderSelectedProducts();
+        }
+
+        function updateProductDosage(prod, val) {
+            selectedProductsForWeed[prod] = val;
+        }
+
+        function renderSelectedProducts() {
+            const list = document.getElementById('selectedProductsList');
+            let html = '';
+            for (const [prod, dosage] of Object.entries(selectedProductsForWeed)) {
+                html += `
+                <div style="display:flex;align-items:center;gap:8px;background:var(--surface);padding:8px;border-radius:8px;border:1px solid var(--border);">
+                    <div style="flex:1;font-size:12px;color:var(--text);">${prod}</div>
+                    <input type="text" placeholder="Dosage (e.g. 500ml/ac)" value="${dosage}" oninput="updateProductDosage('${prod}', this.value)" style="width:120px;padding:4px 8px;border:1px solid var(--border);border-radius:4px;background:var(--bg);color:var(--text);font-size:11px;font-family:'JetBrains Mono',monospace;">
+                    <button onclick="removeProduct('${prod}')" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:14px;padding:0 4px;">&times;</button>
+                </div>`;
+            }
+            list.innerHTML = html;
+        }
+
+        function closeWeedModal() {
+            document.getElementById('weedObsModal').classList.remove('open');
+            activeWeedForModal = null;
+        }
+
+        function saveWeedObs() {
+            if (!activeWeedForModal) return;
+            const w = activeWeedForModal;
+            const density = document.getElementById('obsDensity').value;
+            const coverage = document.getElementById('obsCoverage').value || '—';
+            const easilyControlled = document.getElementById('easilyControlled').checked;
+            const weedSev = document.getElementById('weedSevDropdown').value;
+            // Get selected stages and distribution
+            const stageBtns = document.getElementById('weedGrowthStages').querySelectorAll('.sel-btn.active');
+            const stages = Array.from(stageBtns).map(b => b.textContent).join(', ');
+            const distBtns = document.getElementById('weedDistribution').querySelectorAll('.sel-btn.active');
+            const dist = Array.from(distBtns).map(b => b.textContent).join(', ');
+
+            // Remove existing entry for same weed if re-editing
+            weedObsList = weedObsList.filter(o => o.id !== w.id);
+            weedObsList.push({
+                id: w.id, species: w.common, sci: w.sci, type: w.type,
+                photo: w.photo, density, coverage, control: w.control,
+                easilyControlled, weedSev, stages, dist, products: { ...selectedProductsForWeed }
+            });
+            renderWeedObsList();
+            renderSuggestedWeeds();
+            renderWeedPickerGrid(document.querySelector('.wpf-chip.active')?.textContent.replace(/[🌾🌿🍃]/g, '').trim() || 'All');
+            closeWeedModal();
+            showNotif(`🌿 ${w.common} added to survey`);
+        }
+
+        function renderWeedObsList() {
+            const cont = document.getElementById('weedObsContainer');
+            if (!weedObsList.length) {
+                cont.innerHTML = `<div style="text-align:center;padding:16px;color:var(--textmuted);font-size:12px;
+                        border:1px dashed var(--border);border-radius:10px;margin-bottom:10px;background:var(--surface);">
+      <span style="font-size:22px;">🌿</span><br/>No weeds selected yet</div>`;
+                return;
+            }
+            cont.innerHTML = `
+    <div style="display:flex;flex-wrap:wrap;gap:6px;padding:10px;background:var(--surface);
+                border:1px solid var(--border);border-radius:10px;margin-bottom:10px;">
+      <div style="width:100%;font-size:10px;color:var(--accent);font-family:'JetBrains Mono',monospace;
+                  margin-bottom:4px;letter-spacing:1px;">✓ ${weedObsList.length} WEED${weedObsList.length > 1 ? 'S' : ''} SELECTED</div>
+      ${weedObsList.map(o => {
+                const tc = { Grass: COLORS.accent, Sedge: COLORS.amber, Broadleaf: COLORS.sage }[o.type] || COLORS.accent;
+                const dc = o.density.startsWith('High') ? COLORS.red : o.density.startsWith('Med') ? COLORS.amber : COLORS.textmuted;
+                return `
+        <div style="display:flex;align-items:center;gap:8px;width:100%;padding:8px;
+                    background:var(--card);border-radius:8px;border:1px solid var(--border);">
+          <img src="${o.photo}" style="width:36px;height:36px;border-radius:7px;object-fit:cover;flex-shrink:0;"
+            onerror="this.style.display='none'"/>
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:12px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${o.species}</div>
+            <div style="font-size:10px;color:${dc};margin-top:1px;">${o.density}</div>
+          </div>
+          <span style="font-size:10px;padding:2px 7px;border-radius:10px;background:${tc}22;color:${tc};border:1px solid ${tc}44;flex-shrink:0;">${o.coverage}%</span>
+          <button onclick="removeWeedObs('${o.id}')"
+            style="background:none;border:none;color:var(--textmuted);cursor:pointer;font-size:16px;flex-shrink:0;line-height:1;">✕</button>
+        </div>`;
+            }).join('')}
+    </div>`;
+        }
+
+        function removeWeedObs(id) {
+            weedObsList = weedObsList.filter(o => o.id !== id);
+            renderWeedObsList();
+            renderSuggestedWeeds();
+            renderWeedPickerGrid(document.querySelector('.wpf-chip.active')?.textContent.replace(/[🌾🌿🍃]/g, '').trim() || 'All');
+        }
+
+        function addWeedObs() { /* legacy — no longer used */ }
+
+        /* ── SURVEY NAVIGATION ── */
+        function surveyNext() {
+            if (surveyStep < 4) {
+                document.getElementById('sp' + surveyStep).classList.remove('active');
+                document.getElementById('sb' + surveyStep).classList.remove('active');
+                document.getElementById('sb' + surveyStep).classList.add('done');
+                surveyStep++;
+                document.getElementById('sp' + surveyStep).classList.add('active');
+                document.getElementById('sb' + surveyStep).classList.add('active');
+                document.getElementById('surveyStepLabel').textContent =
+                    'STEP ' + (surveyStep + 1) + ' OF 5 · ' + SURVEY_STEPS[surveyStep];
+                // scroll back to top of survey page
+                document.getElementById('pages').scrollTop = 0;
+            }
+        }
+
+        function surveyBack() {
+            if (surveyStep > 0) {
+                document.getElementById('sp' + surveyStep).classList.remove('active');
+                document.getElementById('sb' + surveyStep).classList.remove('active');
+                surveyStep--;
+                document.getElementById('sp' + surveyStep).classList.add('active');
+                document.getElementById('sb' + surveyStep).classList.remove('done');
+                document.getElementById('sb' + surveyStep).classList.add('active');
+                document.getElementById('surveyStepLabel').textContent =
+                    'STEP ' + (surveyStep + 1) + ' OF 5 · ' + SURVEY_STEPS[surveyStep];
+                document.getElementById('pages').scrollTop = 0;
+            }
+        }
+
+        function toggleSel(btn, groupId) {
+            document.querySelectorAll('#' + groupId + ' .sel-btn').forEach(b => {
+                b.style.background = 'var(--surface)';
+                b.style.borderColor = 'var(--border)';
+                b.style.color = 'var(--textdim)';
+            });
+            btn.style.background = 'var(--accent)22';
+            btn.style.borderColor = 'var(--accent)';
+            btn.style.color = 'var(--accent)';
+        }
+
+        function captureGPS() {
+            document.getElementById('sv_gps').value = '17.2403° N, 79.1173° E';
+            showNotif('📍 GPS coordinates captured');
+        }
+
+        function addPhoto() {
+            photoCount++;
+            renderPhotos();
+            showNotif('📷 Photo captured');
+        }
+        function renderPhotos() {
+            const grid = document.getElementById('photoGrid');
+            const photos = Array.from({ length: photoCount }, (_, i) => `
+    <div style="aspect-ratio:1;background:var(--surface);border:1px solid var(--border);
+                border-radius:8px;display:flex;flex-direction:column;align-items:center;
+                justify-content:center;gap:4px;font-size:22px;color:var(--textmuted);">
+      📷
+      <span style="font-size:9px;font-family:'JetBrains Mono',monospace;">IMG_00${i + 1}</span>
+    </div>`);
+            const addBtn = `
+    <div onclick="addPhoto()" style="aspect-ratio:1;background:var(--surface);border:1px dashed var(--border);
+                border-radius:8px;display:flex;align-items:center;justify-content:center;
+                font-size:28px;color:var(--textmuted);cursor:pointer;">+</div>`;
+            grid.innerHTML = photos.join('') + addBtn;
+        }
+
+        function submitSurvey() {
+            showNotif('✓ Survey SV-' + Math.floor(Math.random() * 1000 + 2900) + ' submitted');
+            setTimeout(() => {
+                surveyStep = 0;
+                document.querySelectorAll('.step-page').forEach(p => p.classList.remove('active'));
+                document.querySelectorAll('.step').forEach(s => { s.classList.remove('active', 'done'); });
+                document.getElementById('sp0').classList.add('active');
+                document.getElementById('sb0').classList.add('active');
+                document.getElementById('surveyStepLabel').textContent = 'STEP 1 OF 5 · FARMER & LOCATION';
+                weedObsList = []; photoCount = 0;
+                renderWeedObsList(); renderPhotos();
+                renderSuggestedWeeds();
+                renderWeedPickerGrid('All');
+                goPage('home');
+            }, 1500);
+        }
+
+        /* ══════════════════════════════════════
+           WEED ID (CV Simulation)
+        ══════════════════════════════════════ */
+        let scannerRunning = false;
+        const SCAN_FRAMES = ['Align weed within frame', 'Detecting edges…', 'Analysing leaf morphology…', 'Matching pattern database…', 'Generating result…'];
+
+        function buildWeedID() {
+            weedSearch('');
+        }
+
+        function captureAndIdentify() {
+            if (scannerRunning) return;
+            scannerRunning = true;
+            let f = 0;
+            const status = document.getElementById('scanStatus');
+            const interval = setInterval(() => {
+                status.textContent = SCAN_FRAMES[f] || SCAN_FRAMES[SCAN_FRAMES.length - 1];
+                f++;
+                if (f >= SCAN_FRAMES.length) {
+                    clearInterval(interval);
+                    scannerRunning = false;
+                    showCVResults();
+                }
+            }, 700);
+        }
+
+        function showCVResults() {
+            const results = [WEEDS_DB[0], WEEDS_DB[1], WEEDS_DB[6]].map((w, i) => ({ ...w, conf: w.conf - (i * 8) }));
+            const el = document.getElementById('cvResults');
+            el.style.display = 'block';
+            document.getElementById('cvResultList').innerHTML = results.map((w, i) => `
+    <div class="cv-result-card">
+      <div style="position:relative;">
+        <img src="${w.photo}" style="width:100%;height:${i === 0 ? '150px' : '80px'};object-fit:cover;"
+          onerror="this.style.display='none'"/>
+        ${i === 0 ? `<div style="position:absolute;top:8px;left:8px;background:var(--accent);color:var(--bg);
+                   padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;">
+                   🥇 Best Match</div>`: ''}
+      </div>
+      <div class="cv-body">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+          <div>
+            <div style="font-size:14px;font-weight:600;color:var(--text);">${w.common}</div>
+            <div style="font-size:11px;color:var(--textmuted);font-style:italic;">${w.sci}</div>
+          </div>
+          <span class="badge ${w.conf > 85 ? 'bg' : w.conf > 70 ? 'ba' : 'br'}">${w.conf}% conf.</span>
+        </div>
+        <div class="cv-confidence">
+          <div class="cv-conf-fill" style="width:${w.conf}%;background:${w.conf > 85 ? COLORS.accent : w.conf > 70 ? COLORS.amber : COLORS.red};"></div>
+        </div>
+        <div style="margin-top:6px;font-size:11px;color:var(--textmuted);">
+          Control: <span style="color:var(--amber);">${w.control}</span>
+        </div>
+        <div style="display:flex;gap:6px;margin-top:8px;">
+          <button class="btn btn-primary btn-sm" onclick="logWeedFromCV('${w.common}')" style="flex:1;font-size:11px;">Log to Survey</button>
+          <button class="btn btn-outline btn-sm" style="flex:0 0 auto;font-size:11px;">Details</button>
+        </div>
+      </div>
+    </div>`).join('');
+        }
+
+        function resetCamera() {
+            document.getElementById('cvResults').style.display = 'none';
+            document.getElementById('scanStatus').textContent = 'Align weed within frame';
+        }
+
+        function logWeedFromCV(name) {
+            showNotif(`🌿 ${name} logged from CV`);
+        }
+
+        function loadGallery() {
+            showNotif('📷 Gallery feature — select photo to analyse');
+        }
+
+        function weedSearch(q) {
+            const res = document.getElementById('weedSearchResults');
+            const matches = q.length < 2 ? [] : WEEDS_DB.filter(w =>
+                w.common.toLowerCase().includes(q.toLowerCase()) ||
+                w.sci.toLowerCase().includes(q.toLowerCase()));
+            if (!matches.length) { res.innerHTML = ''; return; }
+            res.innerHTML = matches.map(w => `
+    <div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--card);
+                border:1px solid var(--border);border-radius:10px;margin-bottom:8px;">
+      <img src="${w.photo}" style="width:44px;height:44px;border-radius:8px;object-fit:cover;"
+        onerror="this.style.display='none'"/>
+      <div style="flex:1;">
+        <div style="font-size:13px;font-weight:600;color:var(--text);">${w.common}</div>
+        <div style="font-size:10px;color:var(--textmuted);font-style:italic;">${w.sci}</div>
+      </div>
+      <span class="badge ${w.severity === 'High' ? 'br' : 'ba'}">${w.severity}</span>
+    </div>`).join('');
+        }
+
+        /* ══════════════════════════════════════
+           GTM
+        ══════════════════════════════════════ */
+        function buildGTM() {
+            renderGTMPane('active');
+            renderGTMPane('planned');
+            renderGTMPane('completed');
+
+            // Act type selector
+            ['🌾 Field Demo', '🤝 FPO Camp', '🏪 Dealer Act.', '📱 Digital', '🧪 Trial Plot', '📞 Direct Call'].forEach(t => {
+                const b = document.createElement('button');
+                b.className = 'sel-btn'; b.textContent = t;
+                b.style.cssText = 'padding:9px 6px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--textdim);font-size:11px;cursor:pointer;text-align:center;';
+                b.onclick = () => toggleSel(b, 'actTypeSelector');
+                document.getElementById('actTypeSelector').appendChild(b);
+            });
+        }
+
+        function renderGTMPane(type) {
+            const items = ACTIVITIES_DB[type] || [];
+            const containerId = type === 'active' ? 'activityListContainer' :
+                type === 'planned' ? 'plannedListContainer' : 'completedListContainer';
+            const cont = document.getElementById(containerId);
+            if (!cont) return;
+            cont.innerHTML = items.map((a, i) => {
+                const progress = a.target > 0 ? Math.round((a.converted / a.target) * 100) : 0;
+                const statusColor = a.status === 'Active' || a.status === 'Done' ? COLORS.accent :
+                    a.status === 'Scheduled' || a.status === 'Planned' ? COLORS.amber : COLORS.accent;
+                const typeIcon = { 'Demo': '🌾', 'FPO': '🤝', 'Dealer': '🏪', 'Digital': '📱', 'Trial': '🧪' }[a.type] || '📋';
+                return `
+    <div class="act-card">
+      <div class="act-header">
+        <div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <span style="font-size:16px;">${typeIcon}</span>
+            <div class="act-title">${a.title}</div>
+          </div>
+          <div class="act-sub">${a.village} · ${a.date}</div>
+        </div>
+        <span class="badge" style="background:${statusColor}22;color:${statusColor};border:1px solid ${statusColor}44;">${a.status}</span>
+      </div>
+      <div style="font-size:11px;color:var(--textmuted);margin-bottom:6px;">
+        Product: <span style="color:var(--amber);">${a.product}</span>
+      </div>
+      ${a.farmers > 0 ? `
+      <div class="act-progress">
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--textmuted);margin-bottom:4px;">
+          <span>Farmers: ${a.attended}/${a.farmers}</span>
+          <span>Converted: ${a.converted}/${a.target}</span>
+        </div>
+        <div class="act-prog-row">
+          <div class="act-prog-track">
+            <div class="act-prog-fill" style="width:${a.target > 0 ? progress : 0}%;background:${COLORS.accent};"></div>
+          </div>
+          <span style="font-size:10px;color:var(--textmuted);font-family:'JetBrains Mono',monospace;width:30px;text-align:right;">${progress}%</span>
+        </div>
+      </div>`: ''}
+      <div style="display:flex;gap:6px;margin-top:10px;">
+        <button class="btn btn-outline btn-sm" style="flex:1;font-size:11px;">View</button>
+        ${type === 'active' ? `<button class="btn btn-primary btn-sm" style="flex:1;font-size:11px;" onclick="logActivity(${i})">Log Update</button>` : ''}
+        ${type === 'planned' ? `<button class="btn btn-primary btn-sm" style="flex:1;font-size:11px;background:var(--amber);color:var(--bg);">Start Activity</button>` : ''}
+      </div>
+    </div>`;
+            }).join('');
+        }
+
+        function gtmTab(tab, el) {
+            document.querySelectorAll('.tab-pill').forEach(t => t.classList.remove('active'));
+            el.classList.add('active');
+            document.querySelectorAll('.gtm-pane').forEach(p => p.style.display = 'none');
+            document.getElementById('gtm-' + tab).style.display = 'block';
+        }
+
+        function logActivity(i) { showNotif('📝 Activity log updated'); }
+        function createActivity() { showNotif('📅 Activity scheduled successfully'); }
+
+        /* ══════════════════════════════════════
+           FARMERS
+        ══════════════════════════════════════ */
+        let currentFarmerFilter = 'all';
+        let farmerSearchQ = '';
+
+        function buildFarmers() {
+            renderFarmerList();
+            // FAB
+            const fab = document.createElement('button');
+            fab.className = 'fab'; fab.textContent = '+'; fab.id = 'farmerFab';
+            fab.onclick = () => document.getElementById('addFarmerModal').classList.add('open');
+            document.body.appendChild(fab);
+        }
+
+        function farmerFilter(f, el) {
+            currentFarmerFilter = f;
+            document.querySelectorAll('.tab-pill').forEach(t => t.classList.remove('active'));
+            el.classList.add('active');
+            renderFarmerList();
+        }
+
+        function filterFarmers(q) {
+            farmerSearchQ = q.toLowerCase();
+            renderFarmerList();
+        }
+
+        function renderFarmerList() {
+            const list = document.getElementById('farmerList');
+            const filterMap = {
+                all: () => true,
+                surveyed: f => f.surveys > 0,
+                demand: f => f.status === 'In Demand Gen',
+                converted: f => f.status === 'Converted',
+                followup: f => f.status === 'Follow-up Due',
+            };
+            let farmers = FARMERS_DB.filter(filterMap[currentFarmerFilter] || filterMap.all);
+            if (farmerSearchQ) {
+                farmers = farmers.filter(f =>
+                    f.name.toLowerCase().includes(farmerSearchQ) ||
+                    f.village.toLowerCase().includes(farmerSearchQ) ||
+                    f.mobile.includes(farmerSearchQ));
+            }
+            if (!farmers.length) {
+                list.innerHTML = '<div style="text-align:center;padding:30px;color:var(--textmuted);font-size:13px;">No farmers found</div>';
+                return;
+            }
+            list.innerHTML = farmers.map(f => {
+                const statusColor = f.status === 'Converted' ? COLORS.accent :
+                    f.status === 'In Demand Gen' ? COLORS.amber :
+                        f.status === 'Follow-up Due' ? COLORS.red : COLORS.textmuted;
+                return `
+    <div class="farmer-card" id="fc-${f.id}" onclick="toggleFarmer('${f.id}')">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div class="farmer-avatar">${f.emoji}</div>
+        <div style="flex:1;">
+          <div class="farmer-name">${f.name}</div>
+          <div class="farmer-sub">📍 ${f.village} · ${f.land} ac · ${f.irr}</div>
+        </div>
+        <span class="badge" style="background:${statusColor}22;color:${statusColor};border:1px solid ${statusColor}44;font-size:10px;">${f.status}</span>
+      </div>
+      <div class="farmer-detail" id="fd-${f.id}">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
+          <div style="background:var(--surface);border-radius:8px;padding:8px 10px;">
+            <div style="font-size:9px;color:var(--textmuted);margin-bottom:2px;font-family:'JetBrains Mono',monospace;">SURVEYS</div>
+            <div style="font-size:16px;color:var(--text);font-family:'JetBrains Mono',monospace;">${f.surveys}</div>
+          </div>
+          <div style="background:var(--surface);border-radius:8px;padding:8px 10px;">
+            <div style="font-size:9px;color:var(--textmuted);margin-bottom:2px;font-family:'JetBrains Mono',monospace;">LAST CONTACT</div>
+            <div style="font-size:12px;color:var(--textdim);">${f.lastContact}</div>
+          </div>
+          <div style="background:var(--surface);border-radius:8px;padding:8px 10px;">
+            <div style="font-size:9px;color:var(--textmuted);margin-bottom:2px;font-family:'JetBrains Mono',monospace;">MAIN WEED</div>
+            <div style="font-size:11px;color:var(--amber);">${f.weed}</div>
+          </div>
+          <div style="background:var(--surface);border-radius:8px;padding:8px 10px;">
+            <div style="font-size:9px;color:var(--textmuted);margin-bottom:2px;font-family:'JetBrains Mono',monospace;">RECOMMENDED</div>
+            <div style="font-size:11px;color:var(--sage);">${f.product}</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <a href="tel:${f.mobile}" class="btn btn-primary btn-sm" style="flex:1;text-decoration:none;font-size:12px;">📞 Call</a>
+          <a href="https://wa.me/91${f.mobile}" class="btn btn-outline btn-sm" style="flex:1;text-decoration:none;font-size:12px;">💬 WhatsApp</a>
+          <button class="btn btn-outline btn-sm" onclick="startSurveyForFarmer('${f.name}')" style="font-size:11px;">📋 Survey</button>
+        </div>
+      </div>
+    </div>`;
+            }).join('');
+        }
+
+        function toggleFarmer(id) {
+            const card = document.getElementById('fc-' + id);
+            card.classList.toggle('open');
+        }
+
+        function startSurveyForFarmer(name) {
+            goPage('survey');
+            setTimeout(() => {
+                const inp = document.getElementById('sv_farmerName');
+                if (inp) inp.value = name;
+                showNotif(`📋 Survey started for ${name}`);
+            }, 300);
+        }
+
+        function closeFarmerModal() {
+            document.getElementById('addFarmerModal').classList.remove('open');
+            showNotif('👤 Farmer profile saved');
+        }
+
+        /* ══════════════════════════════════════
+           INIT
+        ══════════════════════════════════════ */
+        window.addEventListener('DOMContentLoaded', () => {
+            buildHome();
+            initDone['home'] = true;
+        });
+    </script>
+</body>
+
+</html>

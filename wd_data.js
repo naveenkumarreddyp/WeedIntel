@@ -89,8 +89,8 @@ var MH_MAP={vb:"0 0 650 480",paths:{
 "Nagpur":"M525,25 L615,35 L625,115 L565,145 L525,135 L565,75Z",
 "Beed":"M365,155 L435,135 L435,215 L375,225Z"}};
 var WEED_IMAGES={
-PW1:"ap_barnyard_grass.png",PW2:"ap_variable_flatsedge.png",PW3:"ap_pickerelweed.png",
-PW4:"ap_globe_fimbry.png",PW5:"ap_knotgrass.png",PW6:"ap_water_primrose.png",
-MW1:"mh_purple_nutsedge.png",MW2:"mh_bermuda_grass.png",MW3:"mh_congress_grass.png",
-MW4:"mh_pigweed.png",MW5:"mh_goosegrass.png",MW6:"mh_common_purslane.png"
+PW1:"weed_barnyard_grass.jpg",PW2:"weed_variable_flatsedge.jpg",PW3:"weed_pickerelweed.jpg",
+PW4:"weed_globe_fimbry.jpg",PW5:"weed_knotgrass.jpg",PW6:"weed_water_primrose.jpg",
+MW1:"weed_purple_nutsedge.jpg",MW2:"weed_bermuda_grass.jpg",MW3:"weed_congress_grass.jpg",
+MW4:"weed_pigweed.jpg",MW5:"weed_goosegrass.jpg",MW6:"weed_common_purslane.jpg"
 };

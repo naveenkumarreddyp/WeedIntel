@@ -2,29 +2,39 @@
    PRODUCT LAUNCH TOOL — with Weed Type Selection
    ═══════════════════════════════════════════════ */
 
-var _plSelectedWeed = null; // track currently selected weed across tabs
+var _plSelectedWeed = null;
 
-/* ── Weed-specific premium botanical images (same as segmentation tool) ── */
-var PL_WEED_OPP_IMAGES = {
-    paddy_ap: {
-        PW1: "weed_barnyard_grass.jpg", PW2: "weed_variable_flatsedge.jpg", PW3: "weed_pickerelweed.jpg",
-        PW4: "weed_globe_fimbry.jpg", PW5: "weed_knotgrass.jpg", PW6: "weed_water_primrose.jpg"
-    },
-    maize_mh: {
-        MW1: "weed_purple_nutsedge.jpg", MW2: "weed_bermuda_grass.jpg", MW3: "weed_congress_grass.jpg",
-        MW4: "weed_pigweed.jpg", MW5: "weed_goosegrass.jpg", MW6: "weed_common_purslane.jpg"
-    }
+/* ── Inline SVG map generator using AP_MAP / MH_MAP from wd_data.js ── */
+var _PL_CENTERS={
+  paddy_ap:{"Srikakulam":[414,58],"Vizianagaram":[342,107],"Visakhapatnam":[304,148],"East Godavari":[340,266],"West Godavari":[251,261],"Krishna":[308,348],"Guntur":[217,351],"Prakasam":[297,431],"Nellore":[311,519],"Chittoor":[299,584],"YSR Kadapa":[210,491],"Anantapur":[90,456],"Kurnool":[76,295]},
+  maize_mh:{"Nashik":[173,92],"Pune":[220,192],"Ahmednagar":[309,183],"Aurangabad":[325,98],"Jalgaon":[271,45],"Buldhana":[423,79],"Kolhapur":[145,327],"Sangli":[229,295],"Satara":[141,255],"Solapur":[325,288],"Latur":[419,269],"Nanded":[495,253],"Amravati":[509,71],"Nagpur":[570,88],"Beed":[403,183]}
 };
-var PL_WEED_MATRIX_IMAGES = {
-    paddy_ap: {
-        PW1: "weed_barnyard_grass.jpg", PW2: "weed_variable_flatsedge.jpg", PW3: "weed_pickerelweed.jpg",
-        PW4: "weed_globe_fimbry.jpg", PW5: "weed_knotgrass.jpg", PW6: "weed_water_primrose.jpg"
-    },
-    maize_mh: {
-        MW1: "weed_purple_nutsedge.jpg", MW2: "weed_bermuda_grass.jpg", MW3: "weed_congress_grass.jpg",
-        MW4: "weed_pigweed.jpg", MW5: "weed_goosegrass.jpg", MW6: "weed_common_purslane.jpg"
-    }
-};
+function _plMapColor(pct){
+  if(pct>=80)return'#1b5e20';if(pct>=70)return'#2e7d32';if(pct>=60)return'#558b2f';
+  if(pct>=50)return'#9e9d24';if(pct>=40)return'#f9a825';if(pct>=30)return'#ef6c00';
+  if(pct>=20)return'#e65100';return'#c62828';
+}
+function _plWaveColor(w){return w===1?'#2e7d32':w===2?'#f9a825':'#c62828';}
+function _plFitColor(f){return f==='Strong'?'#2e7d32':f==='Moderate'?'#f9a825':'#c62828';}
+function buildPLMapSVG(ck,title,districtVals){
+  var mapData=ck==='paddy_ap'?AP_MAP:MH_MAP;
+  var centers=_PL_CENTERS[ck];
+  var vbParts=mapData.vb.split(' ').map(Number);var vbW=vbParts[2];var vbH=vbParts[3]+50;
+  var s='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+vbW+' '+vbH+'" style="width:100%;border-radius:10px;border:1px solid var(--border);background:#0b1a10;">';
+  s+='<text x="'+(vbW/2)+'" y="28" text-anchor="middle" fill="#e8f5ec" font-family="Outfit,Arial,sans-serif" font-size="16" font-weight="600">'+title+'</text>';
+  for(var name in mapData.paths){
+    var dv=districtVals[name];if(!dv)continue;
+    s+='<path d="'+mapData.paths[name]+'" fill="'+dv.color+'" stroke="#0b1a10" stroke-width="1.5" opacity="0.92"/>';
+  }
+  for(var name in mapData.paths){
+    var dv=districtVals[name];if(!dv)continue;
+    var c=centers[name];if(!c)continue;var cx=c[0],cy=c[1]+10;
+    var sn=name.length>12?name.substring(0,11)+'.':name;
+    s+='<text x="'+cx+'" y="'+(cy-6)+'" text-anchor="middle" fill="#e8f5ec" font-family="Outfit,Arial,sans-serif" font-size="9" font-weight="600" stroke="#0b1a1088" stroke-width="2" paint-order="stroke">'+sn+'</text>';
+    s+='<text x="'+cx+'" y="'+(cy+7)+'" text-anchor="middle" fill="#e8f5ec" font-family="monospace" font-size="9" stroke="#0b1a1088" stroke-width="2" paint-order="stroke">'+dv.label+'</text>';
+  }
+  s+='</svg>';return s;
+}
 
 /* ── Tab switching ── */
 function plTab(t, el) {
@@ -118,10 +128,15 @@ function renderPLOpp(d, ck, weeds) {
     // Left: map + district grid
     h += '<div>';
     if (sw) {
-        h += '<div style="font-size:13px;color:var(--text);font-weight:600;margin-bottom:8px;">🌿 ' + sw.name + ' — Botanical Specimen & Opportunity</div>';
-        // Use weed-specific premium botanical image
-        var imgSrc = (PL_WEED_OPP_IMAGES[ck] && PL_WEED_OPP_IMAGES[ck][sw.id]) || PL_IMAGES[ck];
-        h += '<img src="' + imgSrc + '" style="width:100%;border-radius:10px;border:1px solid var(--border);"/>';
+        // Use PNG image if available, otherwise fallback to SVG
+        var oppImg = PL_OPP_IMAGES[ck] && PL_OPP_IMAGES[ck][sw.id];
+        if (oppImg) {
+            h += '<img src="' + oppImg + '" style="width:100%;border-radius:10px;border:1px solid var(--border);"/>';
+        } else {
+            var _oppDV={};var _oppKeys=Object.keys(sw.distData);
+            _oppKeys.forEach(function(dn){var dd=sw.distData[dn];_oppDV[dn]={color:_plMapColor(dd.opp),label:dd.opp+'%'};});
+            h+=buildPLMapSVG(ck,sw.name+' — Opportunity',_oppDV);
+        }
 
         // Legend
         h += '<div style="display:flex;gap:10px;margin:10px 0;">';
@@ -145,8 +160,14 @@ function renderPLOpp(d, ck, weeds) {
         });
         h += '</div>';
     } else {
-        h += '<div style="font-size:13px;color:var(--text);font-weight:600;margin-bottom:8px;">' + d.scenario.geography + ' — Unmet Opportunity Index</div>';
-        h += '<img src="' + PL_IMAGES[ck] + '" style="width:100%;border-radius:10px;border:1px solid var(--border);"/>';
+        // Use PNG image for overall unmet opportunity
+        var plOppImg = PL_IMAGES[ck];
+        if (plOppImg) {
+            h += '<img src="' + plOppImg + '" style="width:100%;border-radius:10px;border:1px solid var(--border);"/>';
+        } else {
+            var _genDV={};d.districts.forEach(function(r){_genDV[r.name]={color:_plMapColor(r.unmetOpp),label:r.unmetOpp+'%'};});
+            h+=buildPLMapSVG(ck,d.scenario.geography+' — Unmet Opportunity',_genDV);
+        }
     }
     h += '</div>';
 
@@ -242,9 +263,14 @@ function renderPLMatrix(d, ck, weeds) {
     // Left: matrix visualization
     h += '<div>';
     if (sw) {
-        h += '<div style="font-size:13px;color:var(--text);font-weight:600;margin-bottom:8px;">🌿 ' + sw.name + ' — Botanical Specimen & Prioritization Matrix</div>';
-        var imgSrc = (PL_WEED_MATRIX_IMAGES[ck] && PL_WEED_MATRIX_IMAGES[ck][sw.id]) || PL_MATRIX_IMAGES[ck];
-        h += '<img src="' + imgSrc + '" style="width:100%;border-radius:10px;border:1px solid var(--border);"/>';
+        // Use PNG fit image if available, otherwise fallback to SVG
+        var fitImg = PL_FIT_IMAGES[ck] && PL_FIT_IMAGES[ck][sw.id];
+        if (fitImg) {
+            h += '<img src="' + fitImg + '" style="width:100%;border-radius:10px;border:1px solid var(--border);"/>';
+        } else {
+            var _matDV={};Object.keys(sw.distData).forEach(function(dn){var dd=sw.distData[dn];_matDV[dn]={color:_plFitColor(dd.fit),label:dd.fit};});
+            h+=buildPLMapSVG(ck,sw.name+' — Product Fit',_matDV);
+        }
 
         // Build dynamic heatmap table for this weed
         h += '<div style="margin-top:14px;">';
@@ -280,8 +306,14 @@ function renderPLMatrix(d, ck, weeds) {
         h += '<div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--textdim);"><div style="width:12px;height:12px;border-radius:3px;background:#e05c5c;"></div>Weak Fit</div>';
         h += '</div>';
     } else {
-        h += '<div style="font-size:11px;color:var(--textmuted);font-family:\'JetBrains Mono\',monospace;margin-bottom:8px;">WEED × AREA PRIORITIZATION MATRIX</div>';
-        h += '<img src="' + PL_MATRIX_IMAGES[ck] + '" style="width:100%;border-radius:10px;border:1px solid var(--border);"/>';
+        // Use PNG wave image if available
+        var waveImg = PL_WAVE_IMAGES[ck];
+        if (waveImg) {
+            h += '<img src="' + waveImg + '" style="width:100%;border-radius:10px;border:1px solid var(--border);"/>';
+        } else {
+            var _wvDV={};d.districts.forEach(function(r){_wvDV[r.name]={color:_plWaveColor(r.wave),label:'W'+r.wave};});
+            h+=buildPLMapSVG(ck,'Launch Wave Prioritization',_wvDV);
+        }
     }
     h += '</div>';
 
@@ -438,8 +470,14 @@ function renderPLRoadmap(d) {
         { n: 2, label: 'Wave 2 — Expand', color: '#e8b84b', season: 'Rabi 2025 / Kharif 2026', desc: 'Expansion with pre-mix opportunity' },
         { n: 3, label: 'Wave 3 — Monitor', color: '#e05c5c', season: 'Kharif 2026+', desc: 'Long-term expansion targets' }
     ];
+    var ck = getSelectedCrop();
     var h = '<div style="display:grid;grid-template-columns:3fr 2fr;gap:20px;">';
     h += '<div>';
+    // Show wave map image at the top of the roadmap
+    var waveImg = PL_WAVE_IMAGES[ck];
+    if (waveImg) {
+        h += '<img src="' + waveImg + '" style="width:100%;border-radius:10px;border:1px solid var(--border);margin-bottom:14px;"/>';
+    }
     waves.forEach(function (w) {
         var wd = d.districts.filter(function (r) { return r.wave === w.n; });
         var pot = wd.reduce(function (s, r) { return s + r.estPotCr; }, 0).toFixed(1);

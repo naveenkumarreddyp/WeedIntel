@@ -1,3 +1,7 @@
+var FLORA_HEATMAP_IMAGES={
+paddy_ap:{PW1:"ap_barnyard_grass.png",PW2:"ap_variable_flatsedge.png",PW3:"ap_pickerelweed.png",PW4:"ap_globe_fimbry.png",PW5:"ap_knotgrass.png",PW6:"ap_water_primrose.png"},
+maize_mh:{MW1:"mh_purple_nutsedge.png",MW2:"mh_bermuda_grass.png",MW3:"mh_congress_grass.png",MW4:"mh_pigweed.png",MW5:"mh_goosegrass.png",MW6:"mh_common_purslane.png"}
+};
 function segTab(tab,el){
 ['opp','flora','comp','micro'].forEach(function(t){document.getElementById('seg-'+t).style.display='none';});
 document.getElementById('seg-'+tab).style.display='block';
@@ -81,7 +85,7 @@ function updateFloraMap(){
 var ck=getSelectedCrop();var cd=CROP_DATA[ck];var sd=SEG_DATA[ck];
 var wid=document.getElementById('segFloraWeed').value;
 var w=cd.weeds.find(function(x){return x.id===wid;})||cd.weeds[0];
-var img=WEED_IMAGES[w.id]||getMapImage(ck);
+var img=FLORA_HEATMAP_IMAGES[ck]&&FLORA_HEATMAP_IMAGES[ck][w.id]?FLORA_HEATMAP_IMAGES[ck][w.id]:getMapImage(ck);
 document.getElementById('segFloraMapImg').innerHTML='<img src="'+img+'" style="width:100%;border-radius:10px;border:1px solid var(--border);"/>';
 var hotspots=sd.floraMatrix.filter(function(r){return r[w.common]==='High';}).length;
 var medCount=sd.floraMatrix.filter(function(r){return r[w.common]==='Medium';}).length;

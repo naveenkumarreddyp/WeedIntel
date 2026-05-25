@@ -1,5 +1,14 @@
 var PL_IMAGES={paddy_ap:"ap_launch_opp.png",maize_mh:"mh_launch_opp.png"};
 var PL_MATRIX_IMAGES={paddy_ap:"ap_launch_matrix.png",maize_mh:"mh_launch_matrix.png"};
+var PL_WAVE_IMAGES={paddy_ap:"ap_launch_wave.png",maize_mh:"mh_launch_wave.png"};
+var PL_OPP_IMAGES={
+  paddy_ap:{PW1:"ap_opp_barnyard.png",PW2:"ap_opp_flatsedge.png",PW3:"ap_opp_pickerelweed.png",PW4:"ap_opp_globefimbry.png",PW5:"ap_opp_knotgrass.png",PW6:"ap_opp_waterprimrose.png"},
+  maize_mh:{MW1:"mh_opp_nutsedge.png",MW2:"mh_opp_bermuda.png",MW3:"mh_opp_congress.png",MW4:"mh_opp_pigweed.png",MW5:"mh_opp_goosegrass.png",MW6:"mh_opp_purslane.png"}
+};
+var PL_FIT_IMAGES={
+  paddy_ap:{PW1:"ap_fit_barnyard.png",PW2:"ap_fit_flatsedge.png",PW3:"ap_fit_pickerelweed.png",PW4:"ap_fit_globefimbry.png",PW5:"ap_fit_knotgrass.png",PW6:"ap_fit_waterprimrose.png"},
+  maize_mh:{MW1:"mh_fit_nutsedge.png",MW2:"mh_fit_bermuda.png",MW3:"mh_fit_congress.png",MW4:"mh_fit_pigweed.png",MW5:"mh_fit_goosegrass.png",MW6:"mh_fit_purslane.png"}
+};
 
 /* ═══ WEED TYPES PER CROP-STATE ═══ */
 var PL_WEED_TYPES={
